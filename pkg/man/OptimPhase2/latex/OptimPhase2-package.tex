@@ -1,0 +1,47 @@
+\HeaderA{OptimPhase2-package}{Two-stage design for comparison of a time to event endpoint to a known
+control with potential stopping for futility after the first stage.}{OptimPhase2.Rdash.package}
+\keyword{package}{OptimPhase2-package}
+\begin{Description}\relax
+\code{OptimDes} is the primary function in package
+\code{OptimPhase2}.  Detailed documentation of the design is in
+method.pdf, which can be found under "directory" on the package HTML
+help page.  The user supplies the projected accrual distribution and
+distributions for time to event under the null and alternative
+hypotheses.  \code{OptimDes} returns the total sample size, the
+interim time and sample size, and boundaries for decision rules.
+
+\code{plot.OptimDes} can be applied to the output of \code{OptimDes}
+to evaluate other two-stage designs that may achieve near optimal
+results for both of the implemented optimality criteria.
+\code{print.OptimDes} produces a summary of the design with a comparison to a
+standard single-stage design (which can also be obtained from
+\code{FixDes})  Design parameters for nearly optimal designs can be
+evaluated with \code{np.OptimDes}.  Statistical tests for a two-stage
+design are implemented in \code{Test2stage}.
+
+The function \code{SimDes} produces simulations under the assumed
+design by default to check the accuracy of asymptotic approximations.
+By supplying alterative accrual and survival distributions, the
+performance of the design and estimation can be checked for robustness.
+
+The function \code{weibPmatch} can be used to find parameters of a
+Weibull distribution that match a specified event rate at a specified
+time.  Function \code{weibull.plot} displays a null-alternative pair
+of hypothesized Weibull survival functions.
+\end{Description}
+\begin{Details}\relax
+\Tabular{ll}{
+Package: & OptimPhase2\\
+Type: & Package\\
+Version: & 1.2\\
+Date: & 2006-10-26\\
+License: & GPL version 2 or later\\
+}
+\end{Details}
+\begin{Author}\relax
+Bo Huang <huang@stat.wisc.edu> and Neal Thomas
+\end{Author}
+\begin{SeeAlso}\relax
+\code{Package Survival}
+\end{SeeAlso}
+

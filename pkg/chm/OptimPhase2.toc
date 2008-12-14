@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HEAD></HEAD><HTML><BODY>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package OptimPhase2:  Contents">
+<param name="Local" value="00Index.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package OptimPhase2:  R objects">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="OptimPhase2-package">
+<param name="Local" value="OptimPhase2-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="FixDes">
+<param name="Local" value="FixDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="np.OptimDes">
+<param name="Local" value="np.OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="OptimDes">
+<param name="Local" value="OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="OptimDesControl">
+<param name="Local" value="OptimDesControl.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.OptimDes">
+<param name="Local" value="plot.OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.OptimDes">
+<param name="Local" value="print.OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="SimDes">
+<param name="Local" value="SimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Test2stage">
+<param name="Local" value="Test2stage.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="weibPmatch">
+<param name="Local" value="weibPmatch.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="weibull.plot">
+<param name="Local" value="weibull.plot.html">
+</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package OptimPhase2:  Titles">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Compute the shape or scale parameter for a Weibull distribution so it has a specified event-free rate at a specified time.">
+<param name="Local" value="weibPmatch.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Construct a Single-stage Design for a Time to Event   Endpoint Versus a Known Control Standard">
+<param name="Local" value="FixDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Construct an Optimal Two-stage Design for a Binary Endpoint Evaluated at a Pre-specified Time Versus a Known Control Rate">
+<param name="Local" value="OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Optimal Two-Stage Design with User-specified Combined Sample Size">
+<param name="Local" value="np.OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Plot efficiency of optimal two-stage designs as a function of total sample size">
+<param name="Local" value="plot.OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Plot Weibull Survival Curves">
+<param name="Local" value="weibull.plot.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Print Objects Output By  OptimDes">
+<param name="Local" value="print.OptimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Set parameters controlling numerical methods for OptimDes and np.OptimDes">
+<param name="Local" value="OptimDesControl.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Simulation Studies for Two-Stage Designs with Time to Event   Endpoints from function OptimDes">
+<param name="Local" value="SimDes.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Statistical test for two-stage designs from function OptimDes">
+<param name="Local" value="Test2stage.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Two-stage design for comparison of a time to event endpoint to a known control with potential stopping for futility after the first stage. ">
+<param name="Local" value="OptimPhase2-package.html">
+</OBJECT>
+</UL>
+</UL>
+</BODY></HTML>

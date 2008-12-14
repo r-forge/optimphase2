@@ -1,0 +1,90 @@
+\HeaderA{FixDes}{Construct a Single-stage Design for a Time to Event
+Endpoint Versus a Known Control Standard}{FixDes}
+\keyword{design}{FixDes}
+\begin{Description}\relax
+Find the sample size, duration of accrual, and test boundary for a single-stage
+design with time to event endpoint versus a known control standard.
+Testing is one-sided based on the Kaplan-Meier estimator at a
+user-specified time point.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+FixDes(B.init, m.init, alpha, beta, param, x)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{B.init}] A vector of user-specified time points (B1, ..., Bb) that determine a
+set of time intervals with uniform accrual.
+\item[\code{m.init}] The projected
+number of patients that can be accrued within the time intervals determined by \code{B.init}.
+\item[\code{alpha}] Type I error.
+\item[\code{beta}] Type II error.
+\item[\code{param}] A four-element vector containing: the shape parameter of the Weibull distribution under the
+null hypothesis, the scale parameter of the Weibull distribution under the
+null hypothesis, the shape parameter of the Weibull distribution under the
+alternative hypothesis, the scale parameter of the Weibull distribution under the
+alternative hypothesis.
+\item[\code{x}] Survival time of interest (e.g., 1 year).
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+Estimation is based on the Kaplan-Meier or Nelson-Aalen estimators
+evaluated at a target time (e.g., 1 year).  The event rates at the
+target
+time are computed from Weibull distributions assumed for the treated
+and (assumed known) control distributions, as is done in function \code{\LinkA{OptimDes}{OptimDes}}.
+The design depends only on the event rates at the target time (except
+for small changes due to rounding with different survivor functions).
+The duration of accrual depends on the projected maximum accrual rates.
+\end{Details}
+\begin{Value}
+A list with components:
+\begin{ldescription}
+\item[\code{n0}] Fixed design sample size
+\item[\code{DA}] Duration of accrual
+\item[\code{SL}] Total study length (\code{time, DA+x}).
+\item[\code{n0E}] n0 based on exact binomial test
+\item[\code{DAE}] DA based on exact binomial test
+\item[\code{SLE}] SL based on exact binomial test
+\item[\code{C}] Rejection cutpoint for the test statistic.
+\end{ldescription}
+\end{Value}
+\begin{Note}\relax
+The single-stage sample size is used as the starting value for evaluating the
+optimal \code{n} for a two-stage design in \code{\LinkA{OptimDes}{OptimDes}}.
+\end{Note}
+\begin{Author}\relax
+Bo Huang \email{<huang@stat.wisc.edu>} and Neal Thomas
+\end{Author}
+\begin{References}\relax
+Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
+evaluating survival probabilities. \emph{BMC Medical Research
+Methodology}, \bold{3}, 7.
+
+Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group seqential
+designs for monitoring survival probabilities. \emph{Biometrics},
+\bold{52}, 1033--1042.
+
+Simon R. (1989) Optimal two-stage designs for phase II clinical
+trials. \emph{Controlled Clinical Trials}, \bold{10}, 1--10.
+\end{References}
+\begin{SeeAlso}\relax
+\code{\LinkA{OptimDes}{OptimDes}}, \code{\LinkA{Test2stage}{Test2stage}}, \code{\LinkA{SimDes}{SimDes}}
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+B.init <- c(1, 2, 3, 4, 5)
+m.init <- c(15, 20, 25, 20, 15)
+alpha <- 0.05
+beta <- 0.1
+param <- c(1, 1.09, 2, 1.40)
+x <- 1
+
+# H0: S0=0.40 H1: S1=0.60
+
+FixDes(B.init, m.init, alpha, beta, param, x)
+
+\end{ExampleCode}
+\end{Examples}
+

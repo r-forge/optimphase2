@@ -1,0 +1,46 @@
+\HeaderA{weibull.plot}{Plot Weibull Survival Curves}{weibull.plot}
+\keyword{hplot}{weibull.plot}
+\begin{Description}\relax
+Plot Weibull survival curves with differences at a target time highlighted. Designed for use with the \code{param}
+values input to function \code{\LinkA{OptimDes}{OptimDes}}.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+weibull.plot(param, x, l.type = 1:3, l.col = c("blue", "red"), ...)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{param}] A four-element vector containing: the shape parameter of the Weibull distribution under the
+null hypothesis, the scale parameter of the Weibull distribution under the
+null hypothesis, the shape parameter of the Weibull distribution under the
+alternative hypothesis, the scale parameter of the Weibull distribution under the
+alternative hypothesis.
+\item[\code{x}] Survival time of interest (e.g., 1 year).
+\item[\code{l.type}] Line types for the plot. Default is \code{1-3}.
+\item[\code{l.col}] Line colors for the plot. Default is \code{"blue"} for
+the null survival curve, \code{"red"} for the alternative survival curve.
+\item[\code{...}] Further graphical arguments, see \code{plot.default}.
+\end{ldescription}
+\end{Arguments}
+\begin{Author}\relax
+Bo Huang \email{<huang@stat.wisc.edu>} and Neal Thomas
+\end{Author}
+\begin{References}\relax
+Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995) Continuous
+Univariate Distributions, volume 1, chapter 21. Wiley, New York.
+\end{References}
+\begin{SeeAlso}\relax
+\code{\LinkA{dweibull}{dweibull}}, \code{\LinkA{OptimDes}{OptimDes}},
+\code{\LinkA{weibPmatch}{weibPmatch}}
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+param <- c(1, 1.09, 2, 1.40)
+x <- 1
+
+weibull.plot(param,x)
+
+\end{ExampleCode}
+\end{Examples}
+

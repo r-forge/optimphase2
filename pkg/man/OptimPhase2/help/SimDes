@@ -1,0 +1,174 @@
+SimDes              package:OptimPhase2              R Documentation
+
+_S_i_m_u_l_a_t_i_o_n _S_t_u_d_i_e_s _f_o_r _T_w_o-_S_t_a_g_e _D_e_s_i_g_n_s _w_i_t_h _T_i_m_e _t_o _E_v_e_n_t
+_E_n_d_p_o_i_n_t_s _f_r_o_m _f_u_n_c_t_i_o_n _O_p_t_i_m_D_e_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Simulation experiments to compare the alpha level and power of
+     two-stage designs from function 'OptimDes' with the targetted
+     values.
+
+_U_s_a_g_e:
+
+     SimDes(object,B.init,m.init,weib0,weib1,interimRule='e1',
+            sim.n=1000,e1conv=1/365,CMadj=F,attainI=1,attainT=1,exactBound=F)
+
+_A_r_g_u_m_e_n_t_s:
+
+  object: Output object of function 'OptimDes'
+
+  B.init: A vector of user-specified time points (B1, ..., Bb) that
+          determine a set of time intervals with uniform accrual.  This
+          vector  needs to be specified only if its values differ from
+          the call to 'OptimDes'
+
+  m.init: The projected number of patients that can be accrued within
+          the time intervals determined by 'B.init'.  This vector 
+          needs to be specified only if its values differ from the call
+          to 'OptimDes'
+
+   weib0: A vector with the shape and scale for the Weibull
+          distribution under the null hypothesis.  These need to be
+          specified only if they differ from the input to 'OptimDes'.
+
+   weib1: A vector with the shape and scale for the Weibull
+          distribution under the alternative hypothesis.  These need to
+          be specified only if they differ from the input to
+          'OptimDes'.
+
+interimRule: The interim analysis is performed when the planned 'n1'
+          patients are accrued regardless of the time required when
+          interimRule='n1'.  The interim analysis is performed at the
+          planned time 't1' regardless of the number of patients
+          accrued when interimRule='t1'.  The interim analysis is
+          performed when the truncated (by x) total exposure matches
+          the total expected exposure  when interimRule='e1'.  The
+          default is 'e1'.
+
+   sim.n: The number of simulation replications.
+
+  e1conv: Convergence criteria for matching the truncated exposure when
+          'interimRule='e1''.  The default is 1/365, which is
+          appropriate provided 'B.init' is specified in years
+
+   CMadj: If true, the 'n', 'n1', and 't1' are adjusted by the ratio of
+          the exact binomial to asymptotic normal sample size for the
+          single stage design, as in Case and Morgan 2003. 
+          Proportional adjustment of times and sample sizes are made
+          even if the accrual rates are not constant. The adjustment to
+          the 'mda' is made through the adjustment to 'n' rather than
+          by multiplication to ensure consistency with accrual
+          boundaries.  The truncated exposure time is matched to the
+          adjusted time of the interim analysis. Default is false. 
+
+ attainI: Samples sizes and times of the interim and final analyses
+          often differ from the exact targetted values for operational
+          reasons. The 'attainI' permits simulations with a different
+          interim time or sample size (depending on 'interimRule') by a
+          specified fraction.
+
+ attainT: Simulations with a total sample size (assuming the trial does
+          not stop based on the interim analysis) that differs from the
+          planned total  by a specified fraction.
+
+exactBound: If exactBound is TRUE, a one-sided (upper) test is
+          performed using exact binomial probabilities for the second
+          analysis. The alpha level from the potential first-stage
+          stopping is not recovered regardless of the 'recover' option
+          specified in 'OptimDes'. 
+
+_D_e_t_a_i_l_s:
+
+     The optimal phase II design with time to event endpoints generated
+     by 'OptimDes' assumes that the test statistics are asymptotically
+     normally distributed. However, the sample sizes in phase II trials
+     are relatively small, especially during the interim analysis, thus
+     it is reasonable to raise some doubt for the normal assumption.
+
+     'sim.n'(default is '1000') simulation experiments are conducted to
+     assess how close the empirical type I and II errors come to the
+     target values. 
+
+     Simulation studies can also be used to assess the performance of
+     the optimal design under mis-specification of the design
+     parameters. For example,  if the Weibull shape and scale
+     parameters of the time to event distributions are changed, or if 
+     the accrual rates are changed. (see Case and Morgan, 2003, for
+     discussion of this topic).
+
+_V_a_l_u_e:
+
+     A vector with:
+
+   alpha: Estimated alpha level
+
+   power: Estimated power
+
+     eda: Estimated mean duration of accrual under the null hypothesis
+
+    etsl: Estimated mean total study length under the null hypothesis
+
+    aveE: Average total (truncated at x) exposure at time of interim
+          analysis
+
+pinfoNull: The proportion of the total information obtained at the
+          interim analysis under the null hypothesis
+
+pinfoAlt: The proportion of the total information obtained at the
+          interim analysis under the althernative hypothesis
+
+      n1: Average sample size at interim
+
+      t1: Average time at interim
+
+  phatKl: Lowest interim survival rate continued to final analysis
+
+  phatKh: Highest interim survival rate resulting in terimination
+
+  phatRl: Lowest final survival rate rejecting null
+
+  phatRh: Highest final survival rate without rejecting null
+
+_A_u_t_h_o_r(_s):
+
+     Bo Huang <huang@stat.wisc.edu> and Neal Thomas
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Case M. D. and Morgan T. M. (2003) Design of Phase II cancer
+     trials evaluating survival probabilities. _BMC Medical Research
+     Methodology_, *3*, 7.
+
+     Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group
+     seqential designs for monitoring survival probabilities.
+     _Biometrics_, *52*, 1033-1042.
+
+     Simon R. (1989) Optimal two-stage designs for phase II clinical
+     trials. _Controlled Clinical Trials_, *10*, 1-10.
+
+_S_e_e _A_l_s_o:
+
+     'OptimDes', 'Test2stage'
+
+_E_x_a_m_p_l_e_s:
+
+     B.init <- c(1, 2, 3, 4, 5)
+     m.init <- c(15, 20, 25, 20, 15)
+     alpha <- 0.05
+     beta <- 0.1
+     param <- c(1, 1.09, 2, 1.40)
+     x <- 1
+
+     # H0: S0=0.40 H1: S1=0.60
+
+     object1 <- OptimDes(B.init,m.init,alpha,beta,param,x,target="EDA")
+
+     SimDes(object1)
+
+     SimDes(object1,interimRule='t1')
+
+     ### accrual rates differ from planned
+
+     SimDes(object1,m.init=c(5,5,25,25,25))
+

@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Compute the shape or scale parameter for a Weibull
+distribution so it has a specified event rate at a specified time.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for weibPmatch {OptimPhase2}"><tr><td>weibPmatch {OptimPhase2}</td><td align="right">R Documentation</td></tr></table>
+<h2>Compute the shape or scale parameter for a Weibull
+distribution so it has a specified event rate at a specified time.</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Determine the shape or scale parameter of a Weibull distribution so
+it has event rate P0 at time x.  If the shape is specified, the scale
+parameter is computed, and if the scale is specified, the shape
+parameter is computed.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+weibPmatch(x, p0, shape, scale)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+Time for targetted event rate </td></tr>
+<tr valign="top"><td><code>p0</code></td>
+<td>
+Event rate at time x (1- survival rate). </td></tr>
+<tr valign="top"><td><code>shape</code></td>
+<td>
+If specified, the necessary scale parameter is computed </td></tr>
+<tr valign="top"><td><code>scale</code></td>
+<td>
+If specified, the necessary shape parameter is computed  </td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The time and event rate must be supplied.  Either the shape or
+scale parameter must also be specified, but not both.  The R
+parameterization of the Weibull distribution is used.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A single numerical value is returned, either the shape or scale
+parameter, depending on which is specified by the user.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Bo Huang <a href="mailto:&lt;huang@stat.wisc.edu&gt;">&lt;huang@stat.wisc.edu&gt;</a> and Neal Thomas
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995) Continuous
+Univariate Distributions, volume 1, chapter 21. Wiley, New York.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../../doc/html/search/SearchObject.html?weibull.plot">weibull.plot</a></code>,<code><a href="../../stats/html/Weibull.html">pweibull</a></code>, <code><a href="../../../doc/html/search/SearchObject.html?OptimDes">OptimDes</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+library(OptimPhase2)
+param &lt;- c(1, 1.09, 2, 1.40)
+x&lt;-1
+
+p0&lt;-pweibull(x,param[1],param[2])
+p1&lt;-pweibull(x,param[3],param[4])
+
+weibull.plot(param,x)
+
+### equivalent to simple call
+paramNew&lt;-c(param[1], weibPmatch(x,p0,param[1]), param[3], weibPmatch(x,p1,param[3]))
+weibull.plot(paramNew, x)
+
+### null curve with different shape
+paramNew&lt;-c(3.0, weibPmatch(x,p0,3.0), param[3], weibPmatch(x,p1,param[3]))
+weibull.plot(paramNew, x)
+
+### alternative curve with different scale
+paramNew&lt;-c(param[1], param[2], weibPmatch(x,p1,scale=2), 2)
+weibull.plot(paramNew, x)
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>OptimPhase2</em> <a href="00Index.html">Index]</a></div>
+
+</body></html>
