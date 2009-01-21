@@ -1,0 +1,130 @@
+<html><head><title>Compute the shape or scale parameter for a Weibull
+distribution so it has a specified event-free rate at a specified time.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>weibPmatch(OptimPhase2)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   weibPmatch">
+<param name="keyword" value=" Compute the shape or scale parameter for a Weibull
+distribution so it has a specified event-free rate at a specified time.">
+</object>
+
+
+<h2>Compute the shape or scale parameter for a Weibull
+distribution so it has a specified event-free rate at a specified time.</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Determine the shape or scale parameter of a Weibull distribution so
+it has event-free rate P0 at time x.  If the shape is specified, the scale
+parameter is computed, and if the scale is specified, the shape
+parameter is computed.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+weibPmatch(x, p0, shape, scale)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+Pre-specified time for the event-free endpoint (e.g., 1 year). </td></tr>
+<tr valign="top"><td><code>p0</code></td>
+<td>
+Event-free rate at time x. </td></tr>
+<tr valign="top"><td><code>shape</code></td>
+<td>
+If specified, the necessary scale parameter is computed </td></tr>
+<tr valign="top"><td><code>scale</code></td>
+<td>
+If specified, the necessary shape parameter is computed  </td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The time and event-free rate must be supplied.  Either the shape or
+scale parameter must also be specified, but not both.  The R
+parameterization of the Weibull distribution is used.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A single numerical value is returned, either the shape or scale
+parameter, depending on which is specified by the user.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Bo Huang <a href="mailto:&lt;bo.huang@pfizer.com&gt;">&lt;bo.huang@pfizer.com&gt;</a> and Neal Thomas <a href="mailto:&lt;neal.thomas@pfizer.com&gt;">&lt;neal.thomas@pfizer.com&gt;</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995) Continuous
+Univariate Distributions, volume 1, chapter 21. Wiley, New York.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="weibull.plot.html">weibull.plot</a></code>,<code><a onclick="findlink('stats', 'Weibull.html')" style="text-decoration: underline; color: blue; cursor: hand">pweibull</a></code>, <code><a href="OptimDes.html">OptimDes</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+library(OptimPhase2)
+param &lt;- c(1, 1.09, 2, 1.40)
+x&lt;-1
+
+p0&lt;-pweibull(x,param[1],param[2],lower=FALSE)
+p1&lt;-pweibull(x,param[3],param[4],lower=FALSE)
+
+weibull.plot(param,x)
+
+### equivalent to simple call
+paramNew&lt;-c(param[1], weibPmatch(x,p0,param[1]), param[3], weibPmatch(x,p1,param[3]))
+weibull.plot(paramNew, x)
+
+### null curve with different shape
+paramNew&lt;-c(3.0, weibPmatch(x,p0,3.0), param[3], weibPmatch(x,p1,param[3]))
+weibull.plot(paramNew, x)
+
+### alternative curve with different scale
+paramNew&lt;-c(param[1], param[2], weibPmatch(x,p1,scale=2), 2)
+weibull.plot(paramNew, x)
+
+</pre>
+
+<script Language="JScript">
+function findlink(pkg, fn) {
+var Y, link;
+Y = location.href.lastIndexOf("\\") + 1;
+link = location.href.substring(0, Y);
+link = link + "../../" + pkg + "/chtml/" + pkg + ".chm::/" + fn;
+location.href = link;
+}
+</script>
+
+
+<hr><div align="center">[Package <em>OptimPhase2</em> version 1.8 <a href="00Index.html">Index]</a></div>
+
+</body></html>

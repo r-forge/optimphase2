@@ -1,0 +1,125 @@
+np.OptimDes           package:OptimPhase2           R Documentation
+
+_O_p_t_i_m_a_l _T_w_o-_S_t_a_g_e _D_e_s_i_g_n _w_i_t_h _U_s_e_r-_s_p_e_c_i_f_i_e_d _C_o_m_b_i_n_e_d _S_a_m_p_l_e _S_i_z_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Construct a two-stage design  for a time to event endpoint with
+     possible stopping for futility after the end of Stage 1.  The
+     design  minimizes either the expected duration of accrual (EDA) or
+     the expected total study length (ETSL).  The combined sample size
+     for both stages is pre-specifed by the user.
+
+_U_s_a_g_e:
+
+     np.OptimDes(
+                 B.init, m.init, alpha, beta, param, x, n = NULL, pn = NULL,
+                pt = NULL, target = c("EDA", "ETSL"), recover=TRUE,
+                control = OptimDesControl(), CMadj=F, ...)
+
+_A_r_g_u_m_e_n_t_s:
+
+  B.init: A vector of user-specified time points (B1, ..., Bb) that
+          determine a set of time intervals with uniform accrual.
+
+  m.init: The projected number of patients that can be accrued within
+          the time intervals determined by 'B.init'.
+
+   alpha: Type I error.
+
+    beta: Type II error.
+
+   param: A four-element vector containing: the shape parameter of the
+          Weibull distribution under the null hypothesis, the scale
+          parameter of the Weibull distribution under the null
+          hypothesis, the shape parameter of the Weibull distribution
+          under the alternative hypothesis, the scale parameter of the
+          Weibull distribution under the alternative hypothesis.
+
+       x: Survival time of interest (e.g., 1 year).
+
+       n: User-specified combined sample size for both stages. 
+
+      pn: Combined sample size for both stages specified by the ratio
+          of the targetted two-stage sample size to the correponding
+          sample size for a single-stage design.
+
+      pt: Combined sample size for both stages specified by the ratio
+          of the targetted two-stage study length to the correponding
+          study length for a single-stage design.
+
+  target: When the expected duration of accrual (EDA) is to be
+          minimized, 'target="EDA"'. When the expected total study
+          length is to be minimized, 'target="ETSL"'.
+
+ recover: The Simon Two-Stage design recovers alpha from the Type I
+          errors that would have occured if the study had not been
+          stopped early for futility.  This recovery allows for a
+          slightly lower boundary for the final test, thereby
+          increasing power.  The default with partial data at the
+          interim analysis is to recover the alpha as with the standard
+          Simon design.  When recover=F, the optimal design is found
+          assuming that the boundary for the final test will not be
+          adjusted downward ignoring this small potential gain to
+          ensure protection of the alpha level even when the accrual
+          rates and survivor functions are mis-specified.  
+
+ control: An optional list of control settings.  See 'OptimDesControl'
+          for the parameters that can be set and their default values.
+
+   CMadj: If CMadj=T, the ratios in 'pn' and 'pt' use the exact
+          binomial sample size in the denominator. The 'CMadj' has no
+          effect when 'n' is specified.  The default is 'CMadj=F'.
+
+     ...: No additional optional parameters are currently implemented
+
+_D_e_t_a_i_l_s:
+
+     Plots ('plot.OptimDes') based on the ouput of 'OptimDes' can be
+     used to find compromise designs based on different combined sample
+     sizes (stages 1 and 2) with near optimal values for both ETSL and
+     EDA.  'np.OptimDes' can be used to compute ETSL, EDA, and the
+     other design parameters for any specified total sample size.
+
+     The targetted combined sample size must be specified by one of
+     three equivalent approaches: 'n', 'pn', and 'pt'.
+
+_V_a_l_u_e:
+
+     A list of class 'OptimDes' with the same output as function
+     'OptimDes'.
+
+_A_u_t_h_o_r(_s):
+
+     Bo Huang <huang@stat.wisc.edu> and Neal Thomas
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Case M. D. and Morgan T. M. (2003) Design of Phase II cancer
+     trials evaluating survival probabilities. _BMC Medical Research
+     Methodology_, *3*, 7.
+
+     Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group
+     seqential designs for monitoring survival probabilities.
+     _Biometrics_, *52*, 1033-1042.
+
+     Simon R. (1989) Optimal two-stage designs for phase II clinical
+     trials. _Controlled Clinical Trials_, *10*, 1-10.
+
+_S_e_e _A_l_s_o:
+
+     'OptimDes', 'plot.OptimDes'
+
+_E_x_a_m_p_l_e_s:
+
+     B.init <- c(1, 2, 3, 4, 5)
+     m.init <- c(15, 20, 25, 20, 15)
+     alpha <- 0.05
+     beta <- 0.1
+     param <- c(1, 1.09, 2, 1.40)
+     x <- 1
+
+     # H0: S0=0.40 H1: S1=0.60
+
+     np.OptimDes(B.init,m.init,alpha,beta,param,x,pt=1.1,target="ETSL")
+

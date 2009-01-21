@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Construct a Single-stage Design for a Time to Event
+Endpoint Versus a Known Control Standard</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for FixDes {OptimPhase2}"><tr><td>FixDes {OptimPhase2}</td><td align="right">R Documentation</td></tr></table>
+<h2>Construct a Single-stage Design for a Time to Event
+Endpoint Versus a Known Control Standard</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Find the sample size, duration of accrual, and test boundary for a single-stage
+design with time to event endpoint versus a known control standard.
+Testing is one-sided based on the Kaplan-Meier estimator at a
+user-specified time point.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+FixDes(B.init, m.init, alpha, beta, param, x)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>B.init</code></td>
+<td>
+A vector of user-specified time points (B1, ..., Bb) that determine a
+set of time intervals with uniform accrual.</td></tr>
+<tr valign="top"><td><code>m.init</code></td>
+<td>
+The projected
+number of patients that can be accrued within the time intervals determined by <code>B.init</code>.</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+Type I error.</td></tr>
+<tr valign="top"><td><code>beta</code></td>
+<td>
+Type II error.</td></tr>
+<tr valign="top"><td><code>param</code></td>
+<td>
+A four-element vector containing: the shape parameter of the Weibull distribution under the
+null hypothesis, the scale parameter of the Weibull distribution under the
+null hypothesis, the shape parameter of the Weibull distribution under the
+alternative hypothesis, the scale parameter of the Weibull distribution under the
+alternative hypothesis.</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+Survival time of interest (e.g., 1 year).</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+Estimation is based on the Kaplan-Meier or Nelson-Aalen estimators
+evaluated at a target time (e.g., 1 year).  The event rates at the
+target
+time are computed from Weibull distributions assumed for the treated
+and (assumed known) control distributions, as is done in function <code><a href="../../../doc/html/search/SearchObject.html?OptimDes">OptimDes</a></code>.
+The design depends only on the event rates at the target time (except
+for small changes due to rounding with different survivor functions).
+The duration of accrual depends on the projected maximum accrual rates.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A list with components:
+</p>
+<table summary="R argblock">
+<tr valign="top"><td><code>n0</code></td>
+<td>
+Fixed design sample size</td></tr>
+<tr valign="top"><td><code>DA</code></td>
+<td>
+Duration of accrual</td></tr>
+<tr valign="top"><td><code>SL</code></td>
+<td>
+Total study length (<code>time, DA+x</code>).</td></tr>
+<tr valign="top"><td><code>n0E</code></td>
+<td>
+n0 based on exact binomial test</td></tr>
+<tr valign="top"><td><code>DAE</code></td>
+<td>
+DA based on exact binomial test</td></tr>
+<tr valign="top"><td><code>SLE</code></td>
+<td>
+SL based on exact binomial test</td></tr>
+<tr valign="top"><td><code>C</code></td>
+<td>
+Rejection cutpoint for the test statistic.</td></tr>
+</table>
+
+<h3>Note</h3>
+
+<p>
+The single-stage sample size is used as the starting value for evaluating the
+optimal <code>n</code> for a two-stage design in <code><a href="../../../doc/html/search/SearchObject.html?OptimDes">OptimDes</a></code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Bo Huang <a href="mailto:&lt;huang@stat.wisc.edu&gt;">&lt;huang@stat.wisc.edu&gt;</a> and Neal Thomas
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
+evaluating survival probabilities. <EM>BMC Medical Research
+Methodology</EM>, <B>3</B>, 7.
+</p>
+<p>
+Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group seqential
+designs for monitoring survival probabilities. <EM>Biometrics</EM>,
+<B>52</B>, 1033&ndash;1042.
+</p>
+<p>
+Simon R. (1989) Optimal two-stage designs for phase II clinical
+trials. <EM>Controlled Clinical Trials</EM>, <B>10</B>, 1&ndash;10.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../../doc/html/search/SearchObject.html?OptimDes">OptimDes</a></code>, <code><a href="../../../doc/html/search/SearchObject.html?Test2stage">Test2stage</a></code>, <code><a href="../../../doc/html/search/SearchObject.html?SimDes">SimDes</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+B.init &lt;- c(1, 2, 3, 4, 5)
+m.init &lt;- c(15, 20, 25, 20, 15)
+alpha &lt;- 0.05
+beta &lt;- 0.1
+param &lt;- c(1, 1.09, 2, 1.40)
+x &lt;- 1
+
+# H0: S0=0.40 H1: S1=0.60
+
+FixDes(B.init, m.init, alpha, beta, param, x)
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>OptimPhase2</em> <a href="00Index.html">Index]</a></div>
+
+</body></html>

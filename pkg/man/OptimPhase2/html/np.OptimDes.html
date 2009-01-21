@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Optimal Two-Stage Design with User-specified Combined Sample Size</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for np.OptimDes {OptimPhase2}"><tr><td>np.OptimDes {OptimPhase2}</td><td align="right">R Documentation</td></tr></table>
+<h2>Optimal Two-Stage Design with User-specified Combined Sample Size</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Construct a two-stage design  for a time to event endpoint with possible stopping for futility
+after the end of Stage 1.  The design  minimizes either the expected
+duration of accrual (EDA) or the expected total study length
+(ETSL).  The combined sample size for both stages is
+pre-specifed by the user.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+
+np.OptimDes(
+            B.init, m.init, alpha, beta, param, x, n = NULL, pn = NULL,
+           pt = NULL, target = c("EDA", "ETSL"), recover=TRUE,
+           control = OptimDesControl(), CMadj=F, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>B.init</code></td>
+<td>
+A vector of user-specified time points (B1, ..., Bb) that determine a
+set of time intervals with uniform accrual.</td></tr>
+<tr valign="top"><td><code>m.init</code></td>
+<td>
+The projected
+number of patients that can be accrued within the time intervals determined by <code>B.init</code>.</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+Type I error.</td></tr>
+<tr valign="top"><td><code>beta</code></td>
+<td>
+Type II error.</td></tr>
+<tr valign="top"><td><code>param</code></td>
+<td>
+A four-element vector containing: the shape parameter of the Weibull distribution under the
+null hypothesis, the scale parameter of the Weibull distribution under the
+null hypothesis, the shape parameter of the Weibull distribution under the
+alternative hypothesis, the scale parameter of the Weibull distribution under the
+alternative hypothesis.</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+Survival time of interest (e.g., 1 year).</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+User-specified combined sample size for both stages. </td></tr>
+<tr valign="top"><td><code>pn</code></td>
+<td>
+Combined sample size for both stages specified by the
+ratio of the targetted two-stage sample size to the correponding
+sample size for a single-stage design.</td></tr>
+<tr valign="top"><td><code>pt</code></td>
+<td>
+Combined sample size for both stages specified by the
+ratio of the targetted two-stage study length to the correponding
+study length for a single-stage design.</td></tr>
+<tr valign="top"><td><code>target</code></td>
+<td>
+When the expected duration of
+accrual (EDA) is to be minimized, <code>target="EDA"</code>. When the
+expected total study length is to be minimized,
+<code>target="ETSL"</code>.</td></tr>
+<tr valign="top"><td><code>recover</code></td>
+<td>
+The Simon Two-Stage design recovers alpha from the Type I errors
+that would have occured if the study had not been stopped early for
+futility.  This recovery allows for a slightly lower boundary for the
+final test, thereby increasing power.  The default with partial data
+at the interim analysis is to recover the alpha as with the standard
+Simon design.  When recover=F, the optimal design is found assuming
+that the boundary for the final test will not be adjusted downward
+ignoring this small potential gain to ensure protection of the alpha
+level even when the accrual rates and survivor functions are mis-specified. 
+</td></tr>
+<tr valign="top"><td><code>control</code></td>
+<td>
+An optional list of control settings.  See
+<code><a href="../../../doc/html/search/SearchObject.html?OptimDesControl">OptimDesControl</a></code>
+for the parameters that can be set and their default values.</td></tr>
+<tr valign="top"><td><code>CMadj</code></td>
+<td>
+If CMadj=T, the ratios in <code>pn</code> and <code>pt</code> use
+the exact binomial sample size in the denominator. The <code>CMadj</code>
+has no effect when <code>n</code> is specified.  The default is <code>CMadj=F</code>.</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+No additional optional parameters are currently implemented</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+Plots (<code><a href="../../../doc/html/search/SearchObject.html?plot.OptimDes">plot.OptimDes</a></code>) based on the ouput of
+<code><a href="../../../doc/html/search/SearchObject.html?OptimDes">OptimDes</a></code> can be used to find compromise designs based on
+different combined sample sizes (stages 1 and 2) with
+near optimal values for both ETSL and EDA.  <code>np.OptimDes</code> can be
+used to compute ETSL, EDA, and the other design parameters for any
+specified total sample size.
+</p>
+<p>
+The targetted combined sample size must be specified by one of
+three equivalent approaches: <code>n</code>, <code>pn</code>, and <code>pt</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A list of class <code>OptimDes</code> with the same output as function <code>OptimDes</code>.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Bo Huang <a href="mailto:&lt;huang@stat.wisc.edu&gt;">&lt;huang@stat.wisc.edu&gt;</a> and Neal Thomas
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
+evaluating survival probabilities. <EM>BMC Medical Research
+Methodology</EM>, <B>3</B>, 7.
+</p>
+<p>
+Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group seqential
+designs for monitoring survival probabilities. <EM>Biometrics</EM>,
+<B>52</B>, 1033&ndash;1042.
+</p>
+<p>
+Simon R. (1989) Optimal two-stage designs for phase II clinical
+trials. <EM>Controlled Clinical Trials</EM>, <B>10</B>, 1&ndash;10.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../../doc/html/search/SearchObject.html?OptimDes">OptimDes</a></code>, <code><a href="../../../doc/html/search/SearchObject.html?plot.OptimDes">plot.OptimDes</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+B.init &lt;- c(1, 2, 3, 4, 5)
+m.init &lt;- c(15, 20, 25, 20, 15)
+alpha &lt;- 0.05
+beta &lt;- 0.1
+param &lt;- c(1, 1.09, 2, 1.40)
+x &lt;- 1
+
+# H0: S0=0.40 H1: S1=0.60
+
+np.OptimDes(B.init,m.init,alpha,beta,param,x,pt=1.1,target="ETSL")
+</pre>
+
+
+
+<hr><div align="center">[Package <em>OptimPhase2</em> <a href="00Index.html">Index]</a></div>
+
+</body></html>

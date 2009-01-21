@@ -1,0 +1,49 @@
+\HeaderA{print.OptimDes}{Print Objects Output By  OptimDes}{print.OptimDes}
+\keyword{print}{print.OptimDes}
+\begin{Description}\relax
+Print an object output by \code{\LinkA{OptimDes}{OptimDes}}.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'OptimDes':
+print(x, dig = 3, all=FALSE, condPow=F,
+                     CMadj=F, ...)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] Object output by \code{OptimDes}.
+\item[\code{dig}] Number of digits printed.
+\item[\code{all}] If \code{TRUE}, results
+are printed for all total sample sizes evaluated by 
+\code{OptimDes}.
+\item[\code{condPow}] Conditional power at the test boundary C1 under H1 is
+reported when \code{condPow=T}
+\item[\code{CMadj}] If true, the sample sizes and times are adjusted by
+the ratio of the exact binomial to asymptotic normal sample size for
+the single stage design, as in Case and Morgan 2003.  Proportional
+adjustment of times and sample sizes are made even if the accrual rates
+are not constant. Default is false.
+
+\item[\code{...}] Optional print arguments, see \code{printt.default}.
+\end{ldescription}
+\end{Arguments}
+\begin{Author}\relax
+Bo Huang \email{<huang@stat.wisc.edu>} and Neal Thomas
+\end{Author}
+\begin{References}\relax
+Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
+evaluating survival probabilities. \emph{BMC Medical Research
+Methodology}, \bold{3}, 7.
+
+Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group seqential
+designs for monitoring survival probabilities. \emph{Biometrics},
+\bold{52}, 1033--1042.
+
+Simon R. (1989) Optimal two-stage designs for phase II clinical
+trials. \emph{Controlled Clinical Trials}, \bold{10}, 1--10.
+\end{References}
+\begin{SeeAlso}\relax
+\code{\LinkA{plot.OptimDes}{plot.OptimDes}}, \code{\LinkA{OptimDes}{OptimDes}}
+\end{SeeAlso}
+

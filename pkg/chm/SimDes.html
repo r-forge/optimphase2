@@ -1,0 +1,269 @@
+<html><head><title>Simulation Studies for Two-Stage Designs with Time to Event
+Endpoints from function OptimDes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>SimDes(OptimPhase2)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   SimDes">
+<param name="keyword" value=" Simulation Studies for Two-Stage Designs with Time to Event
+Endpoints from function OptimDes">
+</object>
+
+
+<h2>Simulation Studies for Two-Stage Designs with Time to Event
+Endpoints from function OptimDes</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Simulation experiments to compare the
+alpha level and power of two-stage designs from function
+<code><a href="OptimDes.html">OptimDes</a></code> with the targetted values.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+SimDes(object,B.init,m.init,weib0,weib1,interimRule='e1',
+       sim.n=1000,e1conv=1/365,CMadj=F,attainI=1,attainT=1,FixDes="F", 
+       Rseed)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+Output object of function <code><a href="OptimDes.html">OptimDes</a></code>.</td></tr>
+<tr valign="top"><td><code>B.init</code></td>
+<td>
+A vector of user-specified time points (B1, ..., Bb) that determine a
+set of time intervals with uniform accrual.  This vector 
+needs to be specified only if its values differ from the call to
+<code>OptimDes</code>.</td></tr>
+<tr valign="top"><td><code>m.init</code></td>
+<td>
+The projected
+number of patients that can be accrued within the time intervals
+determined by <code>B.init</code>.  This vector 
+needs to be specified only if its values differ from the call to
+<code>OptimDes</code>.</td></tr>
+<tr valign="top"><td><code>weib0</code></td>
+<td>
+A vector with the shape and scale for the Weibull distribution under the
+null hypothesis.  These need to be specified only if they differ from
+the input to <code>OptimDes</code>.</td></tr>
+<tr valign="top"><td><code>weib1</code></td>
+<td>
+A vector with the shape and scale for the Weibull distribution under the
+alternative hypothesis.  These need to be specified only if they differ from
+the input to <code>OptimDes</code>.</td></tr>
+<tr valign="top"><td><code>interimRule</code></td>
+<td>
+The interim analysis is performed when the planned
+<code>n1</code> patients are accrued regardless of the time required when
+interimRule='n1'.  The interim analysis is performed at the planned
+time <code>t1</code> regardless of the number of patients accrued when
+interimRule='t1'.  The interim analysis is performed when the
+truncated (by x) total exposure matches the total expected exposure 
+when interimRule='e1'.  The default is 'e1'.</td></tr>
+<tr valign="top"><td><code>sim.n</code></td>
+<td>
+The number of simulation replications.</td></tr>
+<tr valign="top"><td><code>e1conv</code></td>
+<td>
+Convergence criteria for matching the truncated
+exposure when <code>interimRule='e1'</code>.  The default is 1/365, which
+is appropriate provided <code>B.init</code> is specified in years</td></tr>
+<tr valign="top"><td><code>CMadj</code></td>
+<td>
+If true, the <code>n</code>, <code>n1</code>, and <code>t1</code> are adjusted by
+the ratio of the exact binomial to asymptotic normal sample size for
+the single stage design, as in Case and Morgan (2003).  Proportional
+adjustment of times and sample sizes are made even if the accrual rates
+are not constant. The adjustment to the <code>mda</code> is made through the
+adjustment to <code>n</code> rather than by multiplication to ensure consistency
+with accrual boundaries.  The truncated exposure time is matched to the
+adjusted time of the interim analysis. Default is false.
+</td></tr>
+<tr valign="top"><td><code>attainI</code></td>
+<td>
+Samples sizes and times of the interim and final
+analyses often differ from the exact targetted values for operational
+reasons. The <code>attainI</code> permits simulations with a
+different interim time or sample size (depending on
+<code>interimRule</code>) by a specified fraction.</td></tr>
+<tr valign="top"><td><code>attainT</code></td>
+<td>
+Simulations with a
+total sample size (assuming the trial does not stop based on
+the interim analysis) that differs from the planned total  by a specified fraction.</td></tr>
+<tr valign="top"><td><code>FixDes</code></td>
+<td>
+If FixDes="E" or "N", a fixed design is simulated with the 
+sample size determined by the Exact or Normal approximation.  
+All other options for modifying the simuations are ignored.  
+The alpha level and power based on an exact test and the normal 
+approximation are returned.  
+All other output variables are 0.  The default is "F"</td></tr>
+<tr valign="top"><td><code>Rseed</code></td>
+<td>
+Optional integer for input to function <code>set.seed</code>. If unspecified, the random seed status at the time of the function call is used.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+<code>sim.n</code>(default is <code>1000</code>) simulation experiments are
+conducted to assess how close the empirical type I and II errors come
+to the target values. 
+</p>
+<p>
+Simulation studies can also be used to assess the performance of the
+optimal design under mis-specification of the design parameters. For
+example,  if the Weibull
+shape and scale parameters of the time to event distributions are
+changed, or if  the accrual rates are changed. (see Case and Morgan,
+2003, for discussion of this topic).
+</p>
+<p>
+The function <code>weibPmatch</code> can be used to select 
+Weibull parameters that yield a target event-free rate at a 
+specified time.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A vector with:
+</p>
+<table summary="R argblock">
+<tr valign="top"><td><code>alphaExact</code></td>
+<td>
+Estimated alpha level using an exact test for the second stage test.</td></tr>
+<tr valign="top"><td><code>alphaNorm</code></td>
+<td>
+Estimated alpha level using an approximate normal test at the second stage test.</td></tr>
+<tr valign="top"><td><code>powerExact</code></td>
+<td>
+Estimated power using an exact test for the second stage test.</td></tr>
+<tr valign="top"><td><code>powerNorm</code></td>
+<td>
+Estimated power using an approximate normal test at the second stage test.</td></tr>
+<tr valign="top"><td><code>eda</code></td>
+<td>
+Estimated mean duration of accrual under the null hypothesis.</td></tr>
+<tr valign="top"><td><code>etsl</code></td>
+<td>
+Estimated mean total study length under the null hypothesis.</td></tr>
+<tr valign="top"><td><code>es</code></td>
+<td>
+Estimated mean total sample size under the null hypothesis.</td></tr>
+<tr valign="top"><td><code>pstopNull</code></td>
+<td>
+The proportion of trials stopped at the interim analysis under the null hypothesis.</td></tr>
+<tr valign="top"><td><code>pstopAlt</code></td>
+<td>
+The proportion of trials stopped at the interim analysis under the alternative hypothesis.</td></tr>
+<tr valign="top"><td><code>aveE</code></td>
+<td>
+Average total (truncated at x) exposure at time of interim
+analysis.</td></tr>
+<tr valign="top"><td><code>pinfoNull</code></td>
+<td>
+The proportion of the total information obtained at
+the interim analysis under the null hypothesis.</td></tr>
+<tr valign="top"><td><code>pinfoAlt</code></td>
+<td>
+The proportion of the total information obtained at
+the interim analysis under the althernative hypothesis.</td></tr>
+<tr valign="top"><td><code>n1</code></td>
+<td>
+Average sample size at interim.</td></tr>
+<tr valign="top"><td><code>t1</code></td>
+<td>
+Average time at interim.</td></tr>
+<tr valign="top"><td><code>phatKl</code></td>
+<td>
+Lowest interim survival rate continued to final analysis 
+based on the normal approximation.</td></tr>
+<tr valign="top"><td><code>phatKh</code></td>
+<td>
+Highest interim survival rate resulting in terimination              based on the normal approximation.</td></tr>
+<tr valign="top"><td><code>phatRl</code></td>
+<td>
+Lowest final survival rate rejecting null 
+based on the normal approximation.</td></tr>
+<tr valign="top"><td><code>phatRh</code></td>
+<td>
+Highest final survival rate without rejecting null
+based on the normal approximation.</td></tr>
+</table>
+
+<h3>Author(s)</h3>
+
+<p>
+Bo Huang <a href="mailto:&lt;bo.huang@pfizer.com&gt;">&lt;bo.huang@pfizer.com&gt;</a> and Neal Thomas <a href="mailto:&lt;neal.thomas@pfizer.com&gt;">&lt;neal.thomas@pfizer.com&gt;</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
+evaluating survival probabilities. <EM>BMC Medical Research
+Methodology</EM>, <B>3</B>, 7.
+</p>
+<p>
+Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group seqential
+designs for monitoring survival probabilities. <EM>Biometrics</EM>,
+<B>52</B>, 1033&ndash;1042.
+</p>
+<p>
+Simon R. (1989) Optimal two-stage designs for phase II clinical
+trials. <EM>Controlled Clinical Trials</EM>, <B>10</B>, 1&ndash;10.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="OptimDes.html">OptimDes</a></code>, <code><a href="Test2stage.html">Test2stage</a></code>,
+<code><a href="weibPmatch.html">weibPmatch</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+B.init &lt;- c(1, 2, 3, 4, 5)
+m.init &lt;- c(15, 20, 25, 20, 15)
+alpha &lt;- 0.05
+beta &lt;- 0.1
+param &lt;- c(1, 1.09, 2, 1.40)
+x &lt;- 1
+
+# H0: S0=0.40 H1: S1=0.60
+
+object1 &lt;- OptimDes(B.init,m.init,alpha,beta,param,x,target="EDA")
+
+SimDes(object1)
+
+SimDes(object1,interimRule='t1')
+
+### accrual rates differ from planned
+
+SimDes(object1,m.init=c(5,5,25,25,25))
+</pre>
+
+
+
+<hr><div align="center">[Package <em>OptimPhase2</em> version 1.9 <a href="00Index.html">Index]</a></div>
+
+</body></html>

@@ -1,0 +1,52 @@
+\HeaderA{OptimDesControl}{Set parameters controlling numerical methods for OptimDes and np.OptimDes}{OptimDesControl}
+\keyword{design}{OptimDesControl}
+\keyword{optimize}{OptimDesControl}
+\begin{Description}\relax
+Set parameters controlling numerical methods for \code{\LinkA{OptimDes}{OptimDes}} and \code{\LinkA{np.OptimDes}{np.OptimDes}}
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+OptimDesControl(trace=FALSE,tol=0.01,conv=1e-6,rho.int=c(0,1),aboveMin=1.05)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{trace}] A logical value indicating if a
+trace of the iteration
+progress should be printed.  Default is \code{FALSE}.  If
+\code{TRUE} the sample size \code{n}, the corresponding optimal
+correlation \code{rho} and minimized \code{EDA}(\code{ETSL}) are
+printed at the conclusion of each iteration.
+\item[\code{tol}] \code{tol} is the
+desired accuracy for \code{optimize}. Default is 0.01.
+\item[\code{conv}] The desired convergence accuracy for \code{C1} and
+\code{C2}. Default is 1e-6.
+\item[\code{rho.int}] A vector containing
+the end-points of the interval to
+be searched for the optimal \code{rho}. Default is (0, 1).
+\item[\code{aboveMin}] The minimization method searches by increasing order
+from the single-stage
+sample size until the criteria exceeds the current minimum by a 
+multiplicative factor of \code{aboveMin}.  The search will also 
+terminate if \code{sum(m.init)} is reached.
+\end{ldescription}
+\end{Arguments}
+\begin{Author}\relax
+Bo Huang \email{<huang@stat.wisc.edu>} and Neal Thomas
+\end{Author}
+\begin{References}\relax
+Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
+evaluating survival probabilities. \emph{BMC Medical Research
+Methodology}, \bold{3}, 7.
+
+Lin D. Y., Shen L., Ying Z. and Breslow N. E. (1996) Group seqential
+designs for monitoring survival probabilities. \emph{Biometrics},
+\bold{52}, 1033--1042.
+
+Simon R. (1989) Optimal two-stage designs for phase II clinical
+trials. \emph{Controlled Clinical Trials}, \bold{10}, 1--10.
+\end{References}
+\begin{SeeAlso}\relax
+\code{\LinkA{OptimDes}{OptimDes}}, \code{\LinkA{np.OptimDes}{np.OptimDes}}
+\end{SeeAlso}
+
