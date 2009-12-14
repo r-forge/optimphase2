@@ -16,8 +16,8 @@
   \item{all}{If \code{TRUE}, results
     are printed for all total sample sizes evaluated by 
 \code{OptimDes}.}
-  \item{condPow}{Conditional power at the test boundary C1 under H1 is
-reported when \code{condPow=T}.}
+  \item{condPow}{The conditional probability of rejecting the null hypothesis computed assuming the alternative distributions
+  and an interim Z statistic equal to the interim test boundary \code{C1} is reported when \code{condPow=T}.}
   \item{CMadj}{If true, the sample sizes and times are adjusted by
 the ratio of the exact binomial to asymptotic normal sample size for
 the single stage design, as in Case and Morgan (2003).  Proportional
@@ -31,6 +31,10 @@ are not constant. Default is false.
 
 
 \references{
+
+  Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
+  endpoints. \emph{In press}. 
+  
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research
   Methodology}, \bold{3}, 7.

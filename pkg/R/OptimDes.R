@@ -210,7 +210,7 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
     # the interval that t falls in    
     count <- apply(m2,2,indX)
     M.sum <- cumsum(M)
-    count.1 <- ifelse(count==1,l,count-1) # avoid error message in the following ifelse function
+    count.1 <- ifelse(count==1,1,count-1) # avoid error message in the following ifelse function
     pr <-ifelse(count==1,(M[1]/n)*(t/B[1]),ifelse(count<=l,M.sum[count.1]/n+
          (M[count]/n)*((t-B[count.1])/(B[count]-B[count.1])),1))
     return(pr)

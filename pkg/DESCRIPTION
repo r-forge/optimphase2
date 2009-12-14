@@ -5,6 +5,6 @@ Version: 1.9
 Date: 2008-11-14
 Author: Bo Huang <bo.huang@pfizer.com> and Neal Thomas <neal.thomas@pfizer.com>
 Maintainer: Bo Huang <bo.huang@pfizer.com>
-Description: Build optimal phase II designs monitoring time to event endpoints
+Description: Build optimal two-stage Phase II designs monitoring time-to-event endpoints at a specified timepoint
 Depends: mvtnorm, stats, graphics, R (>= 2.5.1)
 License: GPL version 2 or later

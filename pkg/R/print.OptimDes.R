@@ -97,7 +97,8 @@ function(x,dig=3,all=FALSE,condPow=F,CMadj=F,...)
   if(condPow){
      cat("\n")
      rho<-x$se[4]/x$se[3]
-     condpow<-1-pnorm(C2,x$u + rho*(C1-rho*x$u))
+     # P(Z2>C2|Z1=C1,H1) based on bivariate normal distributions
+     condpow<-1-pnorm(C2,mean=x$u + rho*(C1-rho*x$u),sd=sqrt(1-rho^2))
      cat("          Conditional power at interim test boundary under H1: ",
          round(condpow,dig), "\n\n")
      ### compute boundaries using the null and alternative SE's

@@ -27,7 +27,16 @@ function(object,B.init,m.init,weib0,weib1,interimRule='e1',
   t1 <- object$stageTime[1]
   C1 <- object$boundary[1]
   C2 <- object$boundary[2]
- 
+
+  if(length(B.init)!=length(m.init))
+  {
+    stop("projected patient times and numbers should be of equal length")
+  }
+
+  if(x>=max(B.init))
+  {
+    stop("the survival time of interest is beyond the projected accrual time")
+  } 
 
   ### apply CM correction factor
 
@@ -60,25 +69,17 @@ function(object,B.init,m.init,weib0,weib1,interimRule='e1',
   shape1 <- weib1[1]
   scale1 <- weib1[2]  
 
-  ### event rate under null hypothesis
+  ### event rate under null hypothesis (not event-free as in OptimDes)
   p0<-pweibull(x,shape=shape0,scale=scale0)
   
-  ### cutoff for events if exact test is used at second stage
+  ### cutoff for number of events if exact test is used at second stage
   cexact<-qbinom(object$test["alpha"],n,p0)
   if(pbinom(cexact,n,p0)>object$test["alpha"])cexact<-cexact-1
 
-  if(length(B.init)!=length(m.init))
-  {
-    stop("projected patient times and numbers should be of equal length")
-  }
 
-  if(x>=max(B.init))
-  {
-    stop("the survival time of interest is beyond the projected accrual time")
-  }
   if(n>sum(m.init))stop("sample size n greater than total potential accrual")
 
-  ### compute mda and distribution resticted to (0,mda)
+  ### compute mda and distribution restricted to (0,mda)
   ### the CMadjfac is applied to mda through the adjustment to n
   mdaout<-compMDA(B.init,m.init,n)
   mda<-mdaout[1]
@@ -139,13 +140,13 @@ function(object,B.init,m.init,weib0,weib1,interimRule='e1',
           }
        t1<-t1*attainI
        if(t1<x+sample.Y[1]){
-          warning("Matched exposure yielded interim time less than x")
+          warning("Matched exposure yielded interim time less than x from enrollment")
           t1<-x+sample.Y[1]
        }
     }else if(interimRule=='t1'){
        t1<-object$stageTime[1]*CMadjfac*attainI
        if(t1<x+sample.Y[1]){
-          warning("Adjusted t1 occurred before time x")
+          warning("Adjusted t1 occurred before time x from enrollment")
           t1<=x+sample.Y[1]
        }
     }else n1<-ceiling(object$n[1]*CMadjfac*attainI)
@@ -162,7 +163,7 @@ function(object,B.init,m.init,weib0,weib1,interimRule='e1',
        if(x>sample.Y[n1]-sample.Y[1]){
           t1<-x+sample.Y[1]
           n1<-min(n,sum(sample.Y<t1)+1)
-          warning("n1 patients were accrued before time x")
+          warning("n1 patients were accrued before time x from enrollment")
        }else  t1<-sample.Y[n1]
        Y1 <- sample.Y[1:n1]
        T1 <- sample.T[1:n1]
@@ -194,7 +195,7 @@ function(object,B.init,m.init,weib0,weib1,interimRule='e1',
        alphaNorm<-  alphaNorm  + 1*(r.fin>C2)
     }else{
         intY<-(r.int<=C1)
-        eda<-eda + (!intY)*max(sample.Y) + intY*max(Y1)
+        eda<-eda + (!intY)*max(sample.Y) + intY*t1
         etsl<-etsl + (!intY)*(max(sample.Y)+x) + intY*t1
         es<-es + intY*n1 + (!intY)*n
         aveE<-aveE + sum(pmin(x,pmax(0,t1-Y1)))

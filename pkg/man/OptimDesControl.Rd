@@ -33,6 +33,10 @@ OptimDesControl(trace=FALSE,tol=0.01,conv=1e-6,rho.int=c(0,1),aboveMin=1.05)
 \author{Bo Huang \email{<bo.huang@pfizer.com>} and Neal Thomas \email{<neal.thomas@pfizer.com>}}
 
 \references{
+
+  Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
+  endpoints. \emph{In press}. 
+  
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research
   Methodology}, \bold{3}, 7.

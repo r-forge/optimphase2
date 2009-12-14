@@ -26,7 +26,7 @@ function(B.init,m.init,alpha,beta,param,x)
 
   ### sample size and study times based on normal approximation to log
   ### hazard function
-  sig21 <- sqrt((1-p1)/p1)  ### delta method applied to binomial variance
+  sig21 <- sqrt((1-p1)/p1)  ### delta method applied to binomial variance (based on Taylor expansion) to estimate sig21 in equation 9
   n0 <-(sig21*(qnorm(1-alpha)+qnorm(1-beta))/((log(lambda(shape0,scale0,x))-
         log(lambda(shape1,scale1,x)))*lambda(shape1,scale1,x)))^2
   n0 <- ceiling(n0)

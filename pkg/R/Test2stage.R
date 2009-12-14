@@ -16,7 +16,7 @@ cen1=rep(1,length(T1)),cen2=rep(1,length(T2)))
 
   if(length(Y2)==0)
   {
-    z1out <- tst(Y1,T1,t1,p0,x,cen1)
+    z1out <- tst(Y1,T1,t1,p0,x,cen1)             # p0: event rate under the null hypothesis
     z1<-z1out["z"]
     names(z1)<-"z1"
     if(printTest==TRUE)
@@ -67,7 +67,7 @@ cen1=rep(1,length(T1)),cen2=rep(1,length(T2)))
     return(c(cum=cum,varcum=varcum))
   }
 
-  # test statistic Z(x;t) of equation 2
+  # test statistic Z(x;t) of equation 3
   tst <- function(Y,T,t,p0,x,cen)
   {
     cumout<-cum(Y,T,t,x,cen)

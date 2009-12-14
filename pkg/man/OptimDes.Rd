@@ -130,6 +130,10 @@ adjustment to sample sizes.  The second value is the expected exposure with the 
 
 
 \references{
+
+  Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
+  endpoints. \emph{In press}. 
+  
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research
   Methodology}, \bold{3}, 7.
