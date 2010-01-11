@@ -195,7 +195,7 @@ function(object,B.init,m.init,weib0,weib1,interimRule='e1',
        alphaNorm<-  alphaNorm  + 1*(r.fin>C2)
     }else{
         intY<-(r.int<=C1)
-        eda<-eda + (!intY)*max(sample.Y) + intY*t1
+        eda<-eda + (!intY)*max(sample.Y) + intY*max(Y1)
         etsl<-etsl + (!intY)*(max(sample.Y)+x) + intY*t1
         es<-es + intY*n1 + (!intY)*n
         aveE<-aveE + sum(pmin(x,pmax(0,t1-Y1)))
