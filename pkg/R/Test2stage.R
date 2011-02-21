@@ -1,48 +1,62 @@
 "Test2stage" <-
-function(Y1,T1,Y2=NULL,T2=NULL,p0,x,C1,C2,t1,MTSL=NULL,printTest=TRUE,
-cen1=rep(1,length(T1)),cen2=rep(1,length(T2)))
+function(x,C1,C1U,C2,tan,num.arm,Y11,T11,p0=NULL,Y21=NULL,T21=NULL,Y10=NULL,T10=NULL,Y20=NULL,T20=NULL,printTest=TRUE,
+cen11=rep(1,length(T11)),cen21=rep(1,length(T21)),cen10=rep(1,length(T10)),cen20=rep(1,length(T20)))
 {
-  if(length(Y1)!=length(T1)|length(Y2)!=length(T2))
+  if(length(Y11)!=length(T11)|length(Y21)!=length(T21))
     stop("study times and failure times should be of equal length")
 
-  if(length(T2)>0 & length(MTSL)==0) 
-    stop("MTSL must be specified when Y2 is specified")
-  
-  if(x>=t1)
+  if(length(Y10)!=length(T10)|length(Y20)!=length(T20))
+    stop("study times and failure times should be of equal length")
+
+  if(x>=tan)
     stop("the survival time of interest should not exceed the interim study time")
+
+  if(num.arm==1 & is.null(p0))
+    stop("The null rate must be specified in single arm trials.")
+
+  if(num.arm==2 & is.null(Y10))
+    stop("A control group must be specified in two arm trials.")
 
   if(printTest!=FALSE&printTest!=TRUE)
     stop("printTest should be a logical value.")
 
-  if(length(Y2)==0)
+  if(length(Y21)==0)
   {
-    z1out <- tst(Y1,T1,t1,p0,x,cen1)             # p0: event rate under the null hypothesis
+    z1out <- tst(tan,x,num.arm,Y11,T11,p0,Y10,T10,cen11,cen10)         # p0: event rate under the null hypothesis
     z1<-z1out["z"]
     names(z1)<-"z1"
     if(printTest==TRUE)
     {  
-      cat(paste("interim test statistic Z1 =",z1,"C1 =",C1),"\n")
+      cat(paste("interim test statistic Z1 =",z1,"C1L =",C1),"\n")
       if(z1<C1)
-        cat("Z1 < C1, stop the study and accept the null hypothesis \n")
-      else
-        cat("Z1 >= C1, continue to the second stage \n")
+        cat("Z1 < C1L, stop the study and accept the null hypothesis \n") 
+         
+      if(z1>C1U)  
+        cat("Z1 > C1U, stop the study and reject the null hypothesis \n") 
+      
+      if(z1>=C1&z1<=C1U)  
+        cat("Z1 >= C1L and Z1 <= C1U, continue to the second stage \n")
+        
     }  
     return(z1out)
     
   }
   else
   {
-    Y=c(Y1,Y2)
-    T=c(T1,T2)
-    cen<-c(cen1,cen2)
-    z2out <- tst(Y,T,MTSL,p0,x,cen)
+    Y1=c(Y11,Y21)
+    Y0=c(Y10,Y20)
+    T1=c(T11,T21)
+    T0=c(T10,T20)
+    cen1<-c(cen11,cen21)
+    cen0<-c(cen10,cen20)
+    z2out <- tst(tan,x,num.arm,Y1,T1,p0,Y0,T0,cen1,cen0)
     z2<-z2out["z"]
     if(printTest==TRUE)
     {  
       cat(paste("final test statistic Z2 =",z2,"C2 =",C2),"\n")    
       if(z2>C2)
         cat("since Z2 > C2, reject the null hypothesis \n")
-      else
+      if(z2<=C2)
         cat("since Z2 <= C2, cannot reject the null hypothesis \n")
     }  
     return(z2out)
@@ -68,15 +82,19 @@ cen1=rep(1,length(T1)),cen2=rep(1,length(T2)))
   }
 
   # test statistic Z(x;t) of equation 3
-  tst <- function(Y,T,t,p0,x,cen)
+  tst <- function(t,x,num.arm,Y1,T1,p0,Y0,T0,cen1,cen0)
   {
-    cumout<-cum(Y,T,t,x,cen)
-    z<-(log(-log(1-p0))-log(max(cumout["cum"],1e-4)))*max(cumout["cum"],
-        1e-4)/(sqrt(cumout["varcum"]))
+    cumout1<-cum(Y1,T1,t,x,cen1)
+    if(num.arm==1){cumout0<- c(cum=-log(1-p0),varcum=0)
+                   names(cumout0)<-c("cum","varcum")
+    }
+    else cumout0<-cum(Y0,T0,t,x,cen0)
+    se<-  sqrt( cumout0["varcum"]/(max(cumout0["cum"],1e-4)^2)+cumout1["varcum"]/(max(cumout1["cum"],1e-4)^2) )
+    z<-(log(max(cumout0["cum"],1e-4))-log(max(cumout1["cum"],1e-4)))/se
+
 	names(z)<-"z"
-    se<-sqrt(cumout["varcum"])
     names(se)<-"se"
-    cumL<-cumout["cum"]
-    names(cumL)<-"cumL"
+    cumL<-log(c(max(cumout1["cum"],1e-4), max(cumout0["cum"],1e-4)))
+    names(cumL)<-c("Log(cumL1)","Log(cumL0)")
     return(c(z,se,cumL))
   }

@@ -35,7 +35,7 @@ OptimDesControl(trace=FALSE,tol=0.01,conv=1e-6,rho.int=c(0,1),aboveMin=1.05)
 \references{
 
   Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
-  endpoints. \emph{In press}. 
+  endpoints. \emph{Statistics in Biopharmaceutical Research}, \bold{2(1)}, 51--61. 
   
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research

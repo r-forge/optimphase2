@@ -1,11 +1,26 @@
 "FixDes" <-
-function(B.init,m.init,alpha,beta,param,x)
+function(B.init,m.init,alpha,beta,param,x,num.arm,r=0.5)
 {  
   shape0 <- param[1]
   scale0 <- param[2]
   shape1 <- param[3]
   scale1 <- param[4]
 
+  if(num.arm!=1&num.arm!=2)
+  {
+    stop("the number of treatment arms must be either one or two")
+  }   
+ 
+  if(num.arm==1&r!=0.5)
+  {
+    warning("randomization ratio not equal to 0.5 for a single-arm study")
+  }
+  
+  if(num.arm==2&r*(1-r)<=0)
+  {
+    stop("invalid randomization ratio r")
+  }
+    
   if(length(B.init)!=length(m.init))
   {
     stop("projected patient times and numbers should be of equal length")
@@ -27,17 +42,54 @@ function(B.init,m.init,alpha,beta,param,x)
   ### sample size and study times based on normal approximation to log
   ### hazard function
   sig21 <- sqrt((1-p1)/p1)  ### delta method applied to binomial variance (based on Taylor expansion) to estimate sig21 in equation 9
+  sig20 <- sqrt((1-p0)/p0)
+  
+  if(num.arm==1) {
   n0 <-(sig21*(qnorm(1-alpha)+qnorm(1-beta))/((log(lambda(shape0,scale0,x))-
         log(lambda(shape1,scale1,x)))*lambda(shape1,scale1,x)))^2
   n0 <- ceiling(n0)
   if(n0>floor(sum(m.init)))warning("Sample size exceeds specified accrual rates/time")
 
   da<-compMDA(B.init,m.init,n0)[1]
+  }
+  
+  if(num.arm==2) {
+  v0 <- (sig20^2)/((1-r)*(-log(p0))^2)
+  v1 <- (sig21^2)/(r*(-log(p1))^2)
+  n0 <- (sqrt(v0+v1)*(qnorm(1-alpha)+qnorm(1-beta))/((log(lambda(shape0,scale0,x))-
+        log(lambda(shape1,scale1,x)))))^2
+  n0 <- ceiling(n0)
+  if(n0>floor(sum(m.init)))warning("Sample size exceeds specified accrual rates/time")
 
-  ### sample size and study times based on exact binomial calculations
+  da<-compMDA(B.init,m.init,n0)[1]
+  }
+  
+  ### sample size and study times based on exact calculations (one-arm: exact binomial; two-arm: Fisher exact)
 
-  n0E<-single.exact(n0,alpha,beta,p0,p1)
-  daE<-compMDA(B.init,m.init,n0E)[1]
+  if(num.arm==1) {
+    n0E<-single.exact(n0,alpha,beta,p0,p1)
+    daE<-compMDA(B.init,m.init,n0E)[1]
+  }
+  
+  
+  
+  if(num.arm==2) {
+    library(clinfun)                 ## package to obtain sample size for Fisher Exact test
+    n0E<-sum(fe.ssize(p0,p1,alpha*2,1-beta,r/(1-r))["Fisher Exact",1:2])
+    daE<-compMDA(B.init,m.init,n0E)[1]
+  }  
+
+  
 
   return(list(n0=n0,DA=da,SL=da+x,n0E=n0E,DAE=daE,SLE=daE+x,C=qnorm(1-alpha)))
 }  
+
+
+##########################################################################################
+# for one-arm:                                                                          ##
+#    normal approximation is more conservative than exact binomial (n.norm>n.binom)     ##
+# for two-arm:                                                                          ##
+#    fisher exact test is more conservative than normal approximation (n.fisher>n.norm) ##
+#                                                                                       ##
+# Fisher exact test is a very conservative test when margins are not fixed              ##
+##########################################################################################

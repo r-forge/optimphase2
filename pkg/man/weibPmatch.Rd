@@ -41,7 +41,7 @@ parameter, depending on which is specified by the user.
 
 \examples{
 
-library(OptimPhase2)
+
 param <- c(1, 1.09, 2, 1.40)
 x<-1
 

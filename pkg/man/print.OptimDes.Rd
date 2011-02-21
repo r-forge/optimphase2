@@ -33,7 +33,7 @@ are not constant. Default is false.
 \references{
 
   Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
-  endpoints. \emph{In press}. 
+  endpoints. \emph{Statistics in Biopharmaceutical Research}, \bold{2(1)}, 51--61. 
   
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research

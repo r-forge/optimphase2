@@ -106,12 +106,12 @@ the interim analysis under the null hypothesis.}
 the interim analysis under the althernative hypothesis.}
 \item{n1}{Average sample size at interim.}
 \item{t1}{Average time at interim.}
-\item{phatKl}{Lowest interim survival rate continued to final analysis 
+\item{difKl}{Lowest interim survival rate difference continued to final analysis 
              based on the normal approximation.} 
-\item{phatKh}{Highest interim survival rate resulting in terimination              based on the normal approximation.}
-\item{phatRl}{Lowest final survival rate rejecting null 
+\item{difKh}{Highest interim survival rate difference resulting in futility terimination based on the normal approximation.}
+\item{difRl}{Lowest final survival rate difference rejecting null 
               based on the normal approximation.}
-\item{phatRh}{Highest final survival rate without rejecting null
+\item{difRh}{Highest final survival rate difference without rejecting null
               based on the normal approximation.} 
 }
 
@@ -120,7 +120,7 @@ the interim analysis under the althernative hypothesis.}
 \references{
 
   Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
-  endpoints. \emph{In press}. 
+  endpoints. \emph{Statistics in Biopharmaceutical Research}, \bold{2(1)}, 51--61. 
   
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research
@@ -147,7 +147,7 @@ x <- 1
 
 # H0: S0=0.40 H1: S1=0.60
 
-object1 <- OptimDes(B.init,m.init,alpha,beta,param,x,target="EDA")
+object1 <- OptimDes(B.init,m.init,alpha,beta,param,x,target="EDA",sf="futility",num.arm=1)
 
 SimDes(object1)
 
@@ -156,6 +156,13 @@ SimDes(object1,interimRule='t1')
 ### accrual rates differ from planned
 
 SimDes(object1,m.init=c(5,5,25,25,25))
+
+
+
+m.init <- 6*c(15, 20, 25, 20, 15)
+object3 <- OptimDes(B.init,m.init,alpha,beta,param,x,target="EDA",sf="OF",num.arm=2)
+SimDes(object3)
+
 }
 
 \keyword{iteration}

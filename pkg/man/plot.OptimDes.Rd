@@ -37,7 +37,7 @@ The plot displays the tradeoff between ETSL, EDA and ES as a function of
 the combined sample size.  Robustness of the optimal two-stage design to
 deviations from the target sample size can be explored.  The plots
 often suggest compromised designs achieving near-optimal results for
-both EDA and ETSL may be a better choice.  Test boundary values (C1, C2), and numerical
+both EDA and ETSL may be a better choice.  Test boundary values (C1L, C1U, C2), and numerical
 values of other design parameters, can be obtained for a design
 selected from the plots using function \code{\link{np.OptimDes}}.
 
@@ -51,7 +51,7 @@ the time for a corresonding single-stage analysis.
 \references{
 
   Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
-  endpoints. \emph{In press}. 
+  endpoints. \emph{Statistics in Biopharmaceutical Research}, \bold{2(1)}, 51--61. 
   
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research

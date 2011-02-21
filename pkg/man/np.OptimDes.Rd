@@ -5,9 +5,12 @@
 
 \description{
 
-Construct a two-stage design with a time-to-event endpoint evaluated at a pre-specified time (e.g., 6 months dosing) versus a known control rate with possible stopping for futility
-after the end of Stage 1 utilizing time to event data.  The design  minimizes either the expected
-  duration of accrual (EDA), the expected sample size (ES), or the expected total study length
+Construct a two-stage design with a time-to-event endpoint evaluated at a pre-specified time (e.g., 6 months dosing) 
+comparing treatment versus either a historical control 
+rate with possible stopping for futility (single-arm), or an active control arm with possible 
+stopping for both futility and superiority (two-arm), after the end of Stage 1 utilizing 
+time to event data.  The design  minimizes either the expected
+duration of accrual (EDA), the expected sample size (ES), or the expected total study length
 (ETSL).  The maximum combined sample size for both stages is
 pre-specifed by the user.
 }
@@ -16,8 +19,8 @@ pre-specifed by the user.
 
 np.OptimDes(
             B.init, m.init, alpha, beta, param, x, n = NULL, pn = NULL,
-           pt = NULL, target = c("EDA", "ETSL","ES"), recover=TRUE,
-           control = OptimDesControl(), CMadj=F, ...)
+           pt = NULL, target = c("EDA", "ETSL","ES"), sf=c("futility","OF","Pocock"),
+           num.arm,r=0.5, recover=TRUE, control = OptimDesControl(), CMadj=F, ...)
 }
 
 \arguments{
@@ -48,6 +51,14 @@ study length for a single-stage design.}
     accrual (EDA) is minimized with \code{target="EDA"}, the
     expected total study length is minimized with 
     \code{target="ETSL"}, and the expected sample size with \code{target="ES"}.}
+  \item{sf}{Spending function for \code{alpha} at the end of Stage 1. There are three
+    types of spending functions: no efficacy stopping with \code{sf="futility"}, 
+    O'Brien-Fleming boundaries with \code{sf="OF"}, and Pocock boundaries with 
+    \code{sf="Pocock"}.}  
+  \item{num.arm}{Number of arms: a single-arm design with \code{num.arm=1}, or a 
+    randomized two-arm design with \code{num.arm=2}.}
+  \item{r}{Proportion of patients randomized to the treatment arm when \code{num.arm=2}.
+    By default, r=0.5.}
   \item{recover}{The Simon Two-Stage design recovers alpha from the Type I errors
 that would have occured if the study had not been stopped early for
 futility.  This recovery allows for a slightly lower boundary for the
@@ -62,7 +73,7 @@ level even when the accrual rates and survivor functions are mis-specified.
 \code{\link{OptimDesControl}}
 for the parameters that can be set and their default values.}
   \item{CMadj}{If CMadj=T, the ratios in \code{pn} and \code{pt} use
-the exact binomial sample size in the denominator. The \code{CMadj}
+the exact test sample size in the denominator. The \code{CMadj}
 has no effect when \code{n} is specified.  The default is \code{CMadj=F}.}
   \item{\dots}{No additional optional parameters are currently implemented}
 }
@@ -94,8 +105,8 @@ specified time.
 
 \references{
 
-  Huang B., Talukder E. and Thomas N. Optimal two-stage Phase II designs with long-term
-  endpoints. \emph{In press}. 
+  Huang B., Talukder E. and Thomas N. (2010). Optimal two-stage Phase II designs with long-term
+  endpoints. \emph{Statistics in Biopharmaceutical Research}, \bold{2}, 51--61. 
   
   Case M. D. and Morgan T. M. (2003) Design of Phase II cancer trials
   evaluating survival probabilities. \emph{BMC Medical Research
@@ -124,8 +135,8 @@ x <- 1
 
 # H0: S0=0.40 H1: S1=0.60
 
-np.OptimDes(B.init,m.init,alpha,beta,param,x,pt=1.1,target="ETSL")
-}
+object4 <- np.OptimDes(B.init,m.init,alpha,beta,param,x,pt=1.1,target="ETSL",sf="futility",num.arm=1)
 
+}
 \keyword{design}
 \keyword{optimize}

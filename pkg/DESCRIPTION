@@ -1,10 +1,10 @@
 Package: OptimPhase2
 Type: Package
-Title: Optimal Two-Stage Phase II Designs with Long-Term Endpoints
-Version: 1.9
-Date: 2008-11-14
+Title: Optimal Two-Stage Phase II Designs for Single-Arm and Two-Arm Randomized Controlled Trials with Long-Term Endpoints
+Version: 2.0
+Date: 2011-2-20
 Author: Bo Huang <bo.huang@pfizer.com> and Neal Thomas <neal.thomas@pfizer.com>
 Maintainer: Bo Huang <bo.huang@pfizer.com>
 Description: Build optimal two-stage Phase II designs monitoring time-to-event endpoints at a specified timepoint
-Depends: mvtnorm, stats, graphics, R (>= 2.5.1)
+Depends: mvtnorm, clinfun, stats, graphics, R (>= 2.7.2)
 License: GPL version 2 or later

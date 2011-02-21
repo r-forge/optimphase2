@@ -22,23 +22,24 @@
 
   n.res <- CMadjfac*x$all.info[,1]
   t1.res <- CMadjfac*x$all.info[,2]
-  MDA.res <- CMadjfac*x$all.info[,5]
-  EDA.res <- CMadjfac*x$all.info[,7]
-  ES.res <- CMadjfac*x$all.info[,9]
+  MDA.res <- CMadjfac*x$all.info[,6]
+  EDA.res <- CMadjfac*x$all.info[,8]
+  ES.res <- CMadjfac*x$all.info[,10]
   eda<- CMadjfac*x$result[1]
   es <- CMadjfac*x$result[3]
   n<-ceiling(CMadjfac*x$n[2])
 
   ETSL.res<-CMadjfac*(x$all.info[,"t1"]+
-            (1-pnorm(x$all.info[,"C1"]))*(x$all.info[,"MTSL"]-
+            (pnorm(x$all.info[,"C1U"])-pnorm(x$all.info[,"C1L"]))*(x$all.info[,"MTSL"]-
              xx-x$all.info[,"t1"])) 
-  ETSL.res<- ETSL.res + (1-pnorm(x$all.info[,"C1"]))*xx
+  ETSL.res<- ETSL.res + (pnorm(x$all.info[,"C1U"])-pnorm(x$all.info[,"C1L"]))*xx
   MTSL.res<-CMadjfac*(x$all.info[,"MTSL"]-xx) + xx
 
   t1<-x$stageTime["t1"]
-  C1<-x$boundary["C1"]
+  C1L<-x$boundary["C1L"]
+  C1U<-x$boundary["C1U"]
   mtsl<-x$stageTime["MTSL"]
-  etsl<-CMadjfac*(t1+(1-pnorm(C1))*(mtsl-xx-t1)) + (1-pnorm(C1))*xx
+  etsl<-CMadjfac*(t1+(pnorm(C1U)-pnorm(C1L))*(mtsl-xx-t1)) + (pnorm(C1U)-pnorm(C1L))*xx
   mtsl<-CMadjfac*(mtsl-xx) + xx
 
 

@@ -1,10 +1,12 @@
 np.OptimDes <-
 function(B.init,m.init,alpha,beta,param,x,n=NULL,pn=NULL,pt=NULL,
-         target=c("EDA","ETSL","ES"),recover=TRUE,
+         target=c("EDA","ETSL","ES"),sf=c("futility","OF","Pocock"),
+         num.arm,r=0.5,recover=TRUE,
          control=OptimDesControl(), CMadj=F, ...)
 {
   
   target <- match.arg(target)
+  sf <- match.arg(sf)
 
   shape0 <- param[1]
   scale0 <- param[2]
@@ -15,6 +17,32 @@ function(B.init,m.init,alpha,beta,param,x,n=NULL,pn=NULL,pt=NULL,
   tol <- control$tol
   conv <- control$conv
   rho.int <- control$rho.int
+  
+  if(num.arm==1&sf!="futility")
+  {
+    stop("only futility interim analysis for single-arm trial")
+  }
+  
+  if(num.arm!=1&num.arm!=2)
+  {
+    stop("The number of treatment arms must be either one or two")
+  }   
+ 
+  if(num.arm!=1 & CMadj==T)
+  {
+    stop("The CM adjustment is for single-group trials only")
+  }   
+
+
+  if(num.arm==1&r!=0.5)
+  {
+    warning("randomization ratio not equal to 0.5 for a single-arm study")
+  }
+  
+  if(num.arm==2&r*(1-r)<=0)
+  {
+    stop("invalid randomization ratio r")
+  }
   
   if(length(B.init)!=length(m.init))
   {
@@ -45,7 +73,7 @@ function(B.init,m.init,alpha,beta,param,x,n=NULL,pn=NULL,pt=NULL,
 
   b <- length(B.init)
   # single stage sample size, duration of accrual and study length
-  fix.d <- FixDes(B.init,m.init,alpha,beta,param,x)
+  fix.d <- FixDes(B.init,m.init,alpha,beta,param,x,num.arm,r)
   n0 <- fix.d$n0
   da <- fix.d$DA
   sl <- fix.d$SL
@@ -72,10 +100,10 @@ function(B.init,m.init,alpha,beta,param,x,n=NULL,pn=NULL,pt=NULL,
   
   optout <- optimize(f.Des1,interval=rho.int,tol=tol,B.init=B.init,
                      m.init=m.init,alpha=alpha,beta=beta,param=param,
-                     x=x,n=n,target=target,conv=conv,recover=recover)
+                     x=x,n=n,num.arm=num.arm,r=r,target=target,sf=sf,conv=conv,recover=recover)
   outcome <- optout$objective
   rho1 <- optout$minimum
-  f.out <- f.Des(B.init,m.init,alpha,beta,param,x,n,rho1,target,conv,recover)
+  f.out <- f.Des(B.init,m.init,alpha,beta,param,x,n,rho1,num.arm,r,target,sf,conv,recover)
 
   EDA <- f.out$EDA
   ETSL <- f.out$ETSL
@@ -83,6 +111,7 @@ function(B.init,m.init,alpha,beta,param,x,n=NULL,pn=NULL,pt=NULL,
   mda <- f.out$mda
   t1.last <- f.out$t1
   C1.last <- f.out$C1
+  C1U.last <- f.out$C1U
   C2.last <- f.out$C2
   n.last <- n
   n1 <- ceiling(f.out$n1)
@@ -91,16 +120,20 @@ function(B.init,m.init,alpha,beta,param,x,n=NULL,pn=NULL,pt=NULL,
   EW<-truncC(B.init,m.init,n.last,x,t1.last) #potential exposure at t1
   EW<-n1*EW
   tadj<-(n0E/n0)*t1.last
+  if(ceiling((n0E/n0)*n.last)>floor(sum(m.init))) 
+  {
+    stop("projected patient sample size is below the minimum requirement for normal approximation adjustment")
+  }  
   EWadj<-truncC(B.init,m.init,ceiling((n0E/n0)*n.last),x,tadj)
   EWadj<-n1*(n0E/n0)*EWadj
   EW<-c(EW,EWadj)
 
-  res<-structure(list(target=target,test=c(alpha=alpha,beta=beta,param=param,
-      x=x,recover=recover),
+  res<-structure(list(target=target,sf=sf,test=c(alpha=alpha,beta=beta,param=param,
+      x=x,recover=recover), design=c(num.arm=num.arm,r=r),
       accrual=list(B.init=B.init,m.init=m.init),
       result=c(EDA=EDA,ETSL=ETSL,ES=ES),n=c(n1=n1,n.last=n.last),
-      stageTime=c(t1=t1.last,MTSL=mda+x),boundary=c(C1=C1.last,
-      C2=C2.last),se=se,u=u,exposure=EW,all.info=NULL,
+      stageTime=c(t1=t1.last,MTSL=mda+x),boundary=c(C1L=C1.last,
+      C1U=C1U.last,C2=C2.last),se=se,u=u,exposure=EW,all.info=NULL,
       single.stageTime=c(n0=n0,DA=da,SL=da+x,n0E=n0E,DAE=DAE,SLE=SLE)),
       class="OptimDes")
  

@@ -1,9 +1,11 @@
 OptimDes<-
 function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
-         recover=TRUE,control=OptimDesControl(),...)
+         sf=c("futility","OF","Pocock"),num.arm,r=0.5,recover=TRUE,
+         control=OptimDesControl(),...)
 {
   
   target <- match.arg(target)
+  sf <- match.arg(sf)
 
   shape0 <- param[1]
   scale0 <- param[2]
@@ -15,7 +17,27 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   conv <- control$conv
   rho.int <- control$rho.int
   aboveMin<- control$aboveMin
+
+  if(num.arm==1&sf!="futility")
+  {
+    stop("only futility interim analysis for single-arm trial")
+  }
   
+  if(num.arm!=1&num.arm!=2)
+  {
+    stop("the number of treatment arms must be either one or two")
+  }   
+ 
+  if(num.arm==1&r!=0.5)
+  {
+    warning("randomization ratio not equal to 0.5 for a single-arm study")
+  }
+  
+  if(num.arm==2&r*(1-r)<=0)
+  {
+    stop("invalid randomization ratio r")
+  }
+    
   if(length(B.init)!=length(m.init))
   {
     stop("Projected patient times and numbers should be of equal length")
@@ -46,12 +68,12 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   }
 
   # single stage sample size, duration of accrual and study length
-  fix.d <- FixDes(B.init,m.init,alpha,beta,param,x)
+  fix.d <- FixDes(B.init,m.init,alpha,beta,param,x,num.arm,r)
   n0 <- fix.d$n0
   da <- fix.d$DA
   sl <- fix.d$SL
 
-  ## compute fixed sample size based on exact binomial computation for
+  ## compute fixed sample size based on exact distributions for
   ## use in optional proportional adjustment of sample sizes and times
   n0E<- fix.d$n0E
   DAE<-fix.d$DAE
@@ -72,6 +94,7 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   min.res <- numeric(nvec)
   t1.res <- numeric(nvec)
   C1.res <- numeric(nvec)
+  C1U.res <- numeric(nvec)
   C2.res <- numeric(nvec)
   MTSL.res <- numeric(nvec)
   MDA.res <- numeric(nvec)
@@ -79,7 +102,10 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   EDA.res <- numeric(nvec)
   ES.res <- numeric(nvec)
   n1.res <- numeric(nvec)
-  u.res<-  numeric(nvec)
+#  if(num.arm==1)
+#  { u.res <-  numeric(nvec) }
+#  if(num.arm==2)
+  u.res <-  matrix(numeric(2*nvec),ncol=2)       
   se.res <- matrix(numeric(4*nvec),ncol=4)
   
   currentMin<-Inf
@@ -88,20 +114,23 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
     i<-n-n0+1
     optout <- optimize(f.Des1,interval=rho.int,tol=tol,B.init=B.init,
             m.init=m.init,alpha=alpha,beta=beta,param=param,x=x,n=n,
-            target=target,conv=conv,recover=recover)
+            num.arm=num.arm,r=r,target=target,sf=sf,conv=conv,recover=recover)
    
     min.res[i] <- optout$objective
     nrho.res[i,2] <- optout$minimum
- 
+    
+    if(optout$objective==1e10) next
+    
     f.out <- f.Des(B.init,m.init,alpha,beta,param,x,n,
-                   optout$minimum,target,conv,recover)
+                   optout$minimum,num.arm,r,target,sf,conv,recover)
     t1.res[i] <- f.out$t1
     C1.res[i] <- f.out$C1
+    C1U.res[i] <- f.out$C1U
     C2.res[i] <- f.out$C2
     MDA.res[i] <- f.out$mda
     MTSL.res[i] <- f.out$mda+x
     se.res[i,] <- f.out$se
-    u.res[i]<-   f.out$u
+    u.res[i,] <- f.out$u
     EDA.res[i]<-f.out$EDA
     ETSL.res[i] <- f.out$ETSL
     ES.res[i] <- f.out$ES
@@ -121,6 +150,7 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   n.res <-    n.res[1:i]
   t1.res <-   t1.res[1:i]
   C1.res <-   C1.res[1:i]
+  C1U.res <- C1U.res[1:i]
   C2.res <-   C2.res[1:i]
   MTSL.res <- MTSL.res[1:i]
   MDA.res <-  MDA.res[1:i]
@@ -129,7 +159,7 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   ES.res <-   ES.res[1:i]
   n1.res <-   n1.res[1:i]
   se.res <-   se.res[1:i,]
-  u.res  <-   u.res[1:i]
+  u.res <-  u.res[1:i,]
   
 
   ## select the optimal n
@@ -143,25 +173,30 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   mda <- MDA.res[order.min]
   t1.last <- t1.res[order.min]
   C1.last <- C1.res[order.min]
+  C1U.last <- C1U.res[order.min]
   C2.last <- C2.res[order.min]
   n1 <- n1.res[order.min]
   se <- se.res[order.min,]
-  u  <- u.res[order.min]
+  u  <- u.res[order.min,]
   EW<-truncC(B.init,m.init,n.last,x,t1.last) #potential exposure at t1
   EW<-n1*EW
   tadj<-(n0E/n0)*t1.last
+  if(ceiling((n0E/n0)*n.last)>floor(sum(m.init))) 
+  {
+    stop("projected patient sample size is below the minimum requirement for normal approximation adjustment")
+  }
   EWadj<-truncC(B.init,m.init,ceiling((n0E/n0)*n.last),x,tadj)
   EWadj<-n1*(n0E/n0)*EWadj
   EW<-c(EW,EWadj)
 
 
-  res <-structure(list(target=target,test=c(alpha=alpha,beta=beta,
-             param=param,x=x,recover=recover),
+  res <-structure(list(target=target,sf=sf,test=c(alpha=alpha,beta=beta,
+             param=param,x=x,recover=recover), design=c(num.arm=num.arm,r=r),
              accrual=list(B.init=B.init,m.init=m.init),
              result=c(EDA=EDA,ETSL=ETSL,ES=ES),n=c(n1=n1,n.last=n.last),
-             stageTime=c(t1=t1.last,MTSL=mda+x),boundary=c(C1=C1.last,C2=C2.last),
-             se=se,u=u,exposure=EW,
-             all.info=data.frame(n=n.res,t1=t1.res,C1=C1.res,C2=C2.res,
+             stageTime=c(t1=t1.last,MTSL=mda+x),boundary=c(C1L=C1.last,
+             C1U=C1U.last,C2=C2.last),se=se,u=u,exposure=EW,
+             all.info=data.frame(n=n.res,t1=t1.res,C1L=C1.res,C1U=C1U.res,C2=C2.res,
              MDA=MDA.res,MTSL=MTSL.res,EDA=EDA.res,ETSL=ETSL.res,ES=ES.res),
              single.stageTime=c(n0=n0,DA=da,SL=da+x,n0E=n0E,DAE=DAE,SLE=SLE)),
              class="OptimDes")
@@ -213,6 +248,7 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
     count.1 <- ifelse(count==1,1,count-1) # avoid error message in the following ifelse function
     pr <-ifelse(count==1,(M[1]/n)*(t/B[1]),ifelse(count<=l,M.sum[count.1]/n+
          (M[count]/n)*((t-B[count.1])/(B[count]-B[count.1])),1))
+    pr<-ifelse(t>=mda,1,pr)
     return(pr)
       
   }    
@@ -239,8 +275,8 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
        return(n1)
     }
 
-  ### compute the single stage design using exact binomial probabilities
-
+  ### compute the single stage design sample size using exact binomial for one-arm study
+  ## one arm
   single.exact<-function(n0,alpha,beta,p0,p1){
      if(p0>=p1)stop("The null event-free rate exceeds the alternative rate")
      fixN<-F
@@ -256,6 +292,11 @@ function(B.init,m.init,alpha,beta,param,x,target=c("EDA","ETSL","ES"),
   return(n0E)
   }
 
+
+    
+  
+  
+  
 
 truncC<-function(B.init,m.init,n,x,t1){
   ### Form distribution of Y given Y<=t1
@@ -323,18 +364,27 @@ truncM<-function(B,Di,x,t1){
 
 ##############################################################################################
 
-  # for each n and rho1, obtain C1 and C2 by the type I&II error constraints
-  f.Des <- function(B.init,m.init,alpha,beta,param,x,n,rho1,target=c("EDA","ETSL","ES"),conv,recover)
+  # for each n and rho1, obtain C1L, C1U and C2 by the type I&II error constraints
+  f.Des <- function(B.init,m.init,alpha,beta,param,x,n,rho1,num.arm,r,
+                    target=c("EDA","ETSL","ES"),sf=c("futility","OF","Pocock"),
+                    conv,recover)
   {
 
     target <- match.arg(target)
+    sf <- match.arg(sf)
 
     shape0 <- param[1]
     scale0 <- param[2]
     shape1 <- param[3]
     scale1 <- param[4]    
-    
+
+    lam0<-lambda(shape0,scale0,x)
+    lam1<-lambda(shape1,scale1,x)
+
     smallC<-1e-5       ### small offset to avoid division by 0
+
+    if(rho1>=1-smallC)return(list(min=1e10)) ### avoid numerical boundary problems
+
 
     ## Step 2, Calculate MDA by n and the accrual function
     mdaout<-compMDA(B.init,m.init,n)
@@ -344,53 +394,58 @@ truncM<-function(B,Di,x,t1){
     ## Step 3
     sig21 <- sqrt(sig2(B.init,m.init,shape1,scale1,x,n,mda+x,mda,l))
     sig20 <- sqrt(sig2(B.init,m.init,shape0,scale0,x,n,mda+x,mda,l))
+ 
+    ## Steps 4 and 5
+    if(num.arm==1){
+        sig11 <- sig21/rho1
 
-    ## Step 4
-    sig11 <- sig21/rho1
-
-    ## Step 5
-     ### simplified version of the integrand (t>=mtsl) in sig2 
-     tempfun <- function(u,shape1,scale1){
-         h(shape1,scale1,u)/s(shape1,scale1,u)
-     }
-
-    temp.int <- integrate(tempfun,0,x,shape1=shape1,scale1=scale1)
-    if(temp.int$message!="OK")
-      stop("integration for tempfun cannot be completed")
-    else
-      temp <- temp.int$value-sig11^2  #check whether there is a root
-    if(temp>0){
-      warning(paste("rho1 on boundary in f.Des.  rho1= ",rho1))
-      return(list(min=Inf))
-    }else  
-    {### find design associated with rho  
-     ### function supplied to root finder for step 5 
-     f5 <- function(t){
-           sig2(B.init,m.init,shape1,scale1,x,n,t,mda,l)-sig11^2
-     }
+        ### find design associated with rho  
+        ### function supplied to root finder for step 5 
+        f5 <- function(t){
+               sig2(B.init,m.init,shape1,scale1,x,n,t,mda,l)-sig11^2
+        }
+    }else{
+        ## find design associated with rho1
+        f5 <-  function(t) {
+              sqrt(sig2(B.init,m.init,shape0,scale0,x,n,t,mda,l)/((1-r)*(lam0^2))+
+              sig2(B.init,m.init,shape1,scale1,x,n,t,mda,l)/(r*(lam1^2)))-
+              (1/rho1)*sqrt((sig20^2)/((1-r)*(lam0^2))+(sig21^2)/(r*(lam1^2)))
+        }
+    }
 
     t1.root <- uniroot(f5,c(x+smallC,mda+x))
     if(suppressWarnings(warning()!=""))
-      stop("the algorithm of uniroot() does not converge in 'maxiter' steps")
-    else
-      t1 <- t1.root$root
+      stop("the algorithm of uniroot() does not converge in 'maxiter' steps") else{ 
+         t1 <- t1.root$root } 
+
+    sig10 <- sqrt(sig2(B.init,m.init,shape0,scale0,x,n,t1,mda,l))
+    if(num.arm==2)sig11 <- sqrt(sig2(B.init,m.init,shape1,scale1,x,n,t1,mda,l))
+
     ## Step 6
     t2 <- mda-t1
 
     ## Step 7
-    sig10 <- sqrt(sig2(B.init,m.init,shape0,scale0,x,n,t1,mda,l))
-
-    ## Step 8
     rho0 <- sig20/sig10
 
-    ## Step 9
-    u <- sqrt(n)*(log(lambda(shape0,scale0,x))-log(lambda(shape1,
-           scale1,x)))*lambda(shape1,scale1,x)/sig21
-
+    ## Step 8
+    if(num.arm==1){
+    u2 <- sqrt(n)*(log(lam0)-log(lam1))*lam1/sig21
+    u1 <- rho1*u2
+    u <- c(u1,u2)
+    }else{
+        v10 <- (sig10^2)/((1-r)*(lam0^2))
+        v11 <- (sig11^2)/(r*(lam1^2))
+        v20 <- (sig20^2)/((1-r)*(lam0^2))
+        v21 <- (sig21^2)/(r*(lam1^2))
+        u1 <- sqrt(n)*(log(lam0)-log(lam1))/sqrt(v10+v11)
+        u2 <- sqrt(n)*(log(lam0)-log(lam1))/sqrt(v20+v21) 
+        
+        u <- c(u1,u2)
+    }
     # the number of patients accrued at the time of interim analysis
     n1<-compTime(B.init,m.init,min(t1,mda))
 
-    ## Step 10
+    ## Step 9
     sigma0 <- diag(2)
     sigma1 <- diag(2)
     sigma0[1,2] <- rho0
@@ -398,16 +453,29 @@ truncM<-function(B,Di,x,t1){
     sigma1[1,2] <- rho1
     sigma1[2,1] <- rho1
 
-
-
+    C1U <- Inf   
+    if(num.arm==2)
+        C1U <- qnorm(1-spfun(rho0,alpha,sf))
+  
 
     if(recover){  ### recover alpha from interim stops
-	    ### bivariate normal integrands for C1 and C2
-	    bvne <- function(z)
-	    {
-	      (pmvnorm(lower=c(z[1],z[2]),upper=c(Inf,Inf),sigma=sigma0)-alpha)^2+
-	      (pmvnorm(lower=c((z[1]-rho1*u),(z[2]-u)),upper=c(Inf,Inf),sigma=sigma1)-(1-beta))^2
-	    }
+	    ### bivariate normal integrands for C1s and C2
+        if(num.arm==1){
+            bvne <- function(z)
+            {
+              (pmvnorm(lower=c(z[1],z[2]),upper=c(Inf,Inf),sigma=sigma0)-alpha)^2+
+              (pmvnorm(lower=c((z[1]-u1),(z[2]-u2)),upper=c(Inf,Inf),sigma=sigma1)-
+                                                        (1-beta))^2
+            }
+        }else{
+          
+            bvne <- function(z)
+            {
+              (pmvnorm(lower=c(min(z[1],C1U),z[2]),upper=c(C1U,Inf),sigma=sigma0)-(alpha-spfun(rho0,alpha,sf)))^2+
+              (1-pnorm(C1U-u1)+pmvnorm(lower=c(min((z[1]-u1),(C1U-u1)),(z[2]-u2)),upper=c((C1U-u1),Inf),sigma=sigma1)-
+                                                       (1-beta))^2
+            }
+        }
 
 	    opt <- optim(c(1,1),bvne,method="Nelder-Mead")
 	    if(opt$value<conv&opt$convergence==0)
@@ -415,29 +483,52 @@ truncM<-function(B,Di,x,t1){
 	      C1 <- opt$par[1]
 	      C2 <- opt$par[2]
 	    }else{
-	      return(list(min=Inf))} #when there is no solution
+	      return(list(min=1e10))} #when there is no solution
 
 	}else{ ### do not recover alpha from interim stops
 
-        C2<- qnorm(1-alpha)
-        C1up<-qnorm(1-beta)+rho1*u
-        C1low<- -3   ### essentially no stopping at interim
+        
+        if(num.arm==1){
+            C2<- qnorm(1-alpha)
+            C1low<- -3   ### essentially no stopping at interim
 
-        powC1<-function(C1){
-        pmvnorm(lower=c((C1-rho1*u),(C2-u)),upper=c(Inf,Inf),sigma=sigma1)-(1-beta)
+            C1up<-qnorm(1-beta)+u2
+            powC1<-function(C1){
+                pmvnorm(lower=c((C1-u1),(C2-u2)),upper=c(Inf,Inf),sigma=sigma1)-
+                                                                    (1-beta)
+            }
+        }else{
+        powC2<-function(C2){
+            1-pnorm(C2)- pmvnorm(lower=c(C1U,C2),upper=c(Inf,Inf),sigma=sigma0)-
+                                                 (alpha-spfun(rho0,alpha,sf))
+        }
+        C2up <- qnorm(1-(alpha-spfun(rho0,alpha,sf)))
+        C2root <- uniroot(powC2,c(-3,C2up))
+        if(suppressWarnings(warning()!="")){
+           return(list(min=1e10))  #when there is no solution
+        }else{
+           C2 <- C2root$root
+        }        
+               
+        
+        C1up<-C1U
+            powC1<-function(C1){  # C1 is C1L in the two-arm
+                1-pnorm(C1U-u1)+pmvnorm(lower=c((C1-u1),(C2-u2)),upper=c((C1U-u1),Inf),sigma=sigma1)
+                                                                  -(1-beta)
+            }
         }
 
-        C1root <- uniroot(powC1,c(C1low,C1up))
+        C1root <- uniroot(powC1,c(C1low,C1up))  ###C1 is C1L in the two-arm
         if(suppressWarnings(warning()!="")){
-           return(list(min=Inf))  #when there is no solution
+           return(list(min=1e10))  #when there is no solution
         }else{
            C1 <- C1root$root
         }
     }
 
-    EDA<- ifelse(t1<mda,t1+(1-pnorm(C1))*t2,mda)
-    ETSL<- t1+(1-pnorm(C1))*(t2+x)
-    ES<- n1+(1-pnorm(C1))*(n-n1)
+    EDA<- ifelse(t1<mda,t1+(pnorm(C1U)-pnorm(C1))*t2,mda)
+    ETSL<- t1+(pnorm(C1U)-pnorm(C1))*(t2+x)
+    ES<- n1+(pnorm(C1U)-pnorm(C1))*(n-n1)
     if(target=="EDA")
       outcome1 <- EDA
     if(target=="ETSL")
@@ -445,8 +536,8 @@ truncM<-function(B,Di,x,t1){
     if(target=="ES")
       outcome1<- ES
     return(list(min=outcome1,EDA=EDA,ETSL=ETSL,ES=ES,n1=n1,t1=t1,mda=mda,
-            C1=C1,C2=C2,se=c(sig10,sig20,sig11,sig21),u=u))
-    }
+            C1=C1,C1U=C1U,C2=C2,se=c(sig10,sig20,sig11,sig21),u=u))
+
   }
 
 ##############################################################################################
@@ -458,11 +549,14 @@ truncM<-function(B,Di,x,t1){
   ### wrapper function for f.Des so it returns the limited output 
   ### expected by function Optimize
 
-  f.Des1 <- function(B.init,m.init,alpha,beta,param,x,n,rho1,target=c("EDA","ETSL","ES"),conv,recover)
+  f.Des1 <- function(B.init,m.init,alpha,beta,param,x,n,rho1,num.arm,r,
+                     target=c("EDA","ETSL","ES"),sf=c("futility","OF","Pocock"),
+                     conv,recover)
   {
     target <- match.arg(target)
-    r <- f.Des(B.init,m.init,alpha,beta,param,x,n,rho1,target,conv,recover)
-    return(r$min)
+    sf <- match.arg(sf)
+    out <- f.Des(B.init,m.init,alpha,beta,param,x,n,rho1,num.arm,r,target,sf,conv,recover)
+    return(out$min)
   }
   
 
@@ -471,3 +565,19 @@ truncM<-function(B,Di,x,t1){
   {
   list(trace=trace,tol=tol,conv=conv,rho.int=rho.int,aboveMin=aboveMin)
 }
+
+  ### alpha spending function
+  spfun <- function(rho,alpha,sf=c("futility","OF","Pocock"))
+  {
+    sf <- match.arg(sf)
+    if(sf=="futility")
+      alpha.rho <- ifelse(rho<1&rho>=0,0,1)
+    
+    if(sf=="OF")
+      alpha.rho <- min(2-2*pnorm(qnorm(1-alpha/2)/sqrt(rho)), alpha)
+    
+    if(sf=="Pocock")
+      alpha.rho <- min(alpha*log(1+(exp(1)-1)*rho),alpha)
+  
+    return(alpha.rho)
+  }
